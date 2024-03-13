@@ -60,7 +60,7 @@ jobs:
         rm argocd-linux-amd64
 
     - name: voir le mdp
-      run: argocd 
+      run: argocd admin 
 
     - name: Exécuter une commande et stocker la réponse dans une variable
       id: command_step
