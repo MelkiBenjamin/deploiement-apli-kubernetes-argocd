@@ -60,18 +60,16 @@ jobs:
         rm argocd-linux-amd64
 
     - name: voir le mdp
-      run: argocd admin 
+      run: argocd admin initial-password
 
-    - name: Exécuter une commande et stocker la réponse dans une variable
-      id: command_step
-      run: echo "::set-output name=result::'argocd admin initial-password -n argocd'"
-
-    - name: Utiliser la réponse dans une autre commande
+    - name: Exécuter ls et stocker les résultats dans une variable
+      id: ls_step
       run: |
-        echo "La réponse de la commande précédente était: ${{ steps.command_step.outputs.result }}"
+        LS_RESULT=$('argocd admin initial-password')
+        echo "::set-output name=ls_result::$LS_RESULT"
 
     - name: login argocd
-      run: argocd login localhost:8080 --insecure --username admin --password ${{ steps.command_step.outputs.result }}
+      run: argocd login localhost:8080 --insecure --username admin --password ${{ steps.ls_step.outputs.ls_result }}
 
     - name: argocd new mdp
       run: argocd account update-password --current-password Z9Zx9cqZw3BfSQ4N --new-password admin
