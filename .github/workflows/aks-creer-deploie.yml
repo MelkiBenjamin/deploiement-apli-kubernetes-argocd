@@ -64,7 +64,7 @@ jobs:
 
     - name: Exécuter une commande et stocker la réponse dans une variable
       id: command_step
-      run: echo "::set-output name=result::argocd admin initial-password -n argocd"
+      run: echo "::set-output name=result::'argocd admin initial-password -n argocd'"
 
     - name: Utiliser la réponse dans une autre commande
       run: |
