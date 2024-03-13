@@ -62,8 +62,8 @@ jobs:
         sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
         rm argocd-linux-amd64
 
-    - name: voir le mdp
-      run: argocd admin initial-password
+    - name: sleep 30s 
+      run: sleep 30s
 
     - name: Exécuter ls et stocker les résultats dans une variable
       id: ls_step
