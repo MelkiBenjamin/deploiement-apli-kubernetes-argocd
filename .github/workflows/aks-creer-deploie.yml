@@ -59,10 +59,16 @@ jobs:
         sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
         rm argocd-linux-amd64
 
-    - name: login argocd
-      run: argocd login localhost:8080 --insecure --username admin --password Z9Zx9cqZw3BfSQ4N
+    - name: attendre argocd
+      run: sleep 10
 
-    - name: argocd mdp
+    - name: voir le mdp
+      run: argocd admin initial-password -n argocd >> test.txt
+
+    - name: login argocd
+      run: argocd login localhost:8080 --insecure --username admin --password cat test.txt
+
+    - name: argocd new mdp
       run: argocd account update-password --current-password Z9Zx9cqZw3BfSQ4N --new-password admin
       
     - name: creer application et synchronize automatique a github
