@@ -70,14 +70,8 @@ jobs:
       run: |
         echo "La réponse de la commande précédente était: ${{ steps.command_step.outputs.result }}"
 
-    - name: Utiliser les résultats dans une autre commande
-      run: |
-        echo "Les résultats de la commande 'ls' étaient: ${{ steps.ls_step.outputs.ls_result }}"
-
-
-
     - name: login argocd
-      run: argocd login localhost:8080 --insecure --username admin --password ${{ steps.ls_step.outputs.ls_result }}
+      run: argocd login localhost:8080 --insecure --username admin --password ${{ steps.command_step.outputs.result }}
 
     - name: argocd new mdp
       run: argocd account update-password --current-password Z9Zx9cqZw3BfSQ4N --new-password admin
