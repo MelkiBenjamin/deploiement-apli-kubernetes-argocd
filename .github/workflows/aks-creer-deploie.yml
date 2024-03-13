@@ -50,6 +50,9 @@ jobs:
     - name: installe argocd
       run: kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
+    - name: sleep 30s
+      run: sleep 30s
+
     - name: redirection pôrt argocd
       run: kubectl port-forward svc/argocd-server -n argocd 8080:443 &
 
@@ -65,7 +68,7 @@ jobs:
     - name: Exécuter ls et stocker les résultats dans une variable
       id: ls_step
       run: |
-        LS_RESULT=$('argocd admin initial-password')
+        LS_RESULT=$(argocd admin initial-password)
         echo "::set-output name=ls_result::$LS_RESULT"
 
     - name: login argocd
