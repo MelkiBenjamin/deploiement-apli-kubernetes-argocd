@@ -59,22 +59,22 @@ jobs:
         sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
         rm argocd-linux-amd64
 
-    - name: attendre argocd
-      run: sleep 10
+    - name: voir le mdp
+      run: argocd admin initial-password -n argocd
 
+    - name: Exécuter une commande et stocker la réponse dans une variable
+      id: command_step
+      run: echo "::set-output name=result::argocd admin initial-password -n argocd"
 
-    - name: Exécuter ls et stocker les résultats dans une variable
-      id: ls_step
+    - name: Utiliser la réponse dans une autre commande
       run: |
-        LS_RESULT=$(argocd admin initial-password -n argocd)
-        echo "::set-output name=ls_result::$LS_RESULT"
+        echo "La réponse de la commande précédente était: ${{ steps.command_step.outputs.result }}"
 
     - name: Utiliser les résultats dans une autre commande
       run: |
         echo "Les résultats de la commande 'ls' étaient: ${{ steps.ls_step.outputs.ls_result }}"
 
-#    - name: voir le mdp
-#      run: argocd admin initial-password -n argocd >> test.txt
+
 
     - name: login argocd
       run: argocd login localhost:8080 --insecure --username admin --password ${{ steps.ls_step.outputs.ls_result }}
