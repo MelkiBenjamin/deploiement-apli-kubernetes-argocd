@@ -1,0 +1,60 @@
+name: configuration et deploie aplication sur aks
+on: [workflow_dispatch, push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: install docker
+      run: sudo apt-get update && sudo apt-get install -y docker.io
+
+#    - name: installer docker
+#      uses: crazy-max/ghaction-setup-docker@v3
+
+    - name: installer kubectl
+      run: sudo apt-get update && sudo apt-get install -y kubectl
+
+#    - name: installer kubectl
+#      uses: azure/setup-kubectl@v3
+#      with:
+#        version: v1.28.2 # default is latest stable
+#      id: install
+
+    - name: installer minikube
+      run: sudo apt-get update && sudo apt-get install -y minikube
+
+    - name: demarer minikube
+      run: minikube start --driver=docker
+
+    - name: creer namespace argocd
+      run: kubectl create namespace argocd
+
+    - name: installe argocd
+      run: kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+    - name: redirection pôrt argocd
+      run: kubectl port-forward svc/argocd-server -n argocd 8080:443 &
+
+    - name: install cli argocd
+      run: |
+        curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+        sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+        rm argocd-linux-amd64
+
+    - name: login argocd
+      run: argocd login localhost:8080 --insecure --username admin --password Z9Zx9cqZw3BfSQ4N
+
+    - name: argocd mdp
+      run: argocd account update-password --current-password Z9Zx9cqZw3BfSQ4N --new-password admin
+      
+    - name: creer application et synchronize automatique a github
+      run: argocd app create evershop --repo https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd --path evershop --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated --auto-prune
+      
+    - name: affiche l'url du service
+      run: minikube service evershop --url      
+    
+    
+       
