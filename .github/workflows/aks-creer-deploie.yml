@@ -69,10 +69,10 @@ jobs:
       id: ls_step
       run: |
         LS_RESULT=$(argocd admin initial-password)
-        echo "::set-output name=ls_result::$LS_RESULT"
+        echo "::set-output name=ls_step::$LS_RESULT"
 
     - name: login argocd
-      run: argocd login localhost:8080 --insecure --username admin --password ${{ steps.ls_step.outputs.ls_result }}
+      run: argocd login localhost:8080 --insecure --username admin --password ${{ steps.ls_step.outputs.ls_step }}
 
     - name: argocd new mdp
       run: argocd account update-password --current-password Z9Zx9cqZw3BfSQ4N --new-password admin
