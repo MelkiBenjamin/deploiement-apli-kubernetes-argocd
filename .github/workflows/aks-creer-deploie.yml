@@ -66,11 +66,11 @@ jobs:
 #      run: sleep 30s
 
     - name: Exécuter la commande argocd 
-      run: argocd admin initial-password -n argocd
+      run: echo "$last_command_output" > password_file.txt
     
     - name: Se connecter à Argo CD
       run: |
-        argocd login localhost:8080 --insecure --username admin --password "$(fc -ln -1)"
+        argocd login localhost:8080 --insecure --username admin --password password_file.txt
 
 #    - name: argocd new mdp
 #      run: argocd account update-password --current-password Z9Zx9cqZw3BfSQ4N --new-password admin
