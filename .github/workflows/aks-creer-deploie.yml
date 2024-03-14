@@ -68,7 +68,7 @@ jobs:
     
 #    - name: Se connecter à Argo CD
 #      run: |
-#        argocd login localhost:8080 --insecure --username admin --password admin  
+#        argocd login localhost:8080 --insecure --username admin --password admin
 
 #    - name: argocd new mdp
 #      run: argocd account update-password --current-password Z9Zx9cqZw3BfSQ4N --new-password admin
@@ -78,7 +78,10 @@ jobs:
         kubectl config set-context --current --namespace=argocd
         argocd login --core
         argocd app create evershop --repo https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd --path evershop --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated --auto-prune
+        sleep 120s    
       
     - name: affiche l'url du service
-      run: minikube service evershop --url      
+      run: |
+        kubectl get service
+        minikube service evershop --url      
     
