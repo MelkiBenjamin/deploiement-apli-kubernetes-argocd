@@ -69,7 +69,8 @@ jobs:
       run: argocd admin initial-password -n argocd
     
     - name: Se connecter à Argo CD
-      run: | 
+      run: |
+        !!
         last_command_output=$(!!)
         argocd login localhost:8080 --insecure --username admin --password "$last_command_output"
 
