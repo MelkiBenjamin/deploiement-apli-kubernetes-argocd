@@ -66,9 +66,9 @@ jobs:
       run: | 
         argocd admin initial-password -n argocd 
     
-    - name: Se connecter à Argo CD
-      run: |
-        argocd login localhost:8080 --insecure --username admin --password admin  
+#    - name: Se connecter à Argo CD
+#      run: |
+#        argocd login localhost:8080 --insecure --username admin --password admin  
 
 #    - name: argocd new mdp
 #      run: argocd account update-password --current-password Z9Zx9cqZw3BfSQ4N --new-password admin
