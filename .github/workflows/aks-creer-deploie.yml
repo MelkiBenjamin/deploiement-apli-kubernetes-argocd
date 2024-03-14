@@ -62,17 +62,14 @@ jobs:
         sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
         rm argocd-linux-amd64
 
-#    - name: sleep 30s 
-#      run: sleep 30s
-
     - name: Exécuter la commande argocd 
       run: | 
-        argocd admin initial-password -n argocd > password_file.txt
+        argocd admin initial-password -n argocd 
     
     - name: Se connecter à Argo CD
       run: |
-        password=$(cat password_file.txt)
-        echo "$password" | argocd login localhost:8080 --insecure --username admin 
+        argocd login localhost:8080 --insecure --username admin --password admin  
+
 #    - name: argocd new mdp
 #      run: argocd account update-password --current-password Z9Zx9cqZw3BfSQ4N --new-password admin
       
