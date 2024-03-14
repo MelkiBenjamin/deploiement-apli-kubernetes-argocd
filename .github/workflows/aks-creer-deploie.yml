@@ -62,9 +62,9 @@ jobs:
         sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
         rm argocd-linux-amd64
 
-    - name: Exécuter la commande argocd 
-      run: | 
-        argocd admin initial-password -n argocd 
+#    - name: Exécuter la commande argocd 
+#      run: | 
+#        argocd admin initial-password -n argocd 
     
 #    - name: Se connecter à Argo CD
 #      run: |
@@ -75,9 +75,9 @@ jobs:
       
     - name: creer application et synchronize automatique a github
       run: |
-        kubectl config set-context --current --namespace=argocd 
-        argocd app create evershop --repo https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd --path evershop --dest-server https://kubernetes.default.svc --dest-namespace default 
-      #--sync-policy automated --auto-prune
+        kubectl config set-context --current --namespace=argocd
+        argocd login --core
+        argocd app create evershop --repo https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd --path evershop --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated --auto-prune
       
     - name: affiche l'url du service
       run: minikube service evershop --url      
