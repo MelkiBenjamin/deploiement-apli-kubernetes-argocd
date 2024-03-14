@@ -48,7 +48,7 @@ jobs:
       run: kubectl create namespace argocd
 
     - name: installe argocd
-      run: kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      run: kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/ha/install.yaml
 
     - name: sleep 30s
       run: sleep 30s
