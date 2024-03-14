@@ -76,7 +76,8 @@ jobs:
     - name: creer application et synchronize automatique a github
       run: |
         kubectl config set-context --current --namespace=argocd 
-        argocd app create evershop --repo https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd --path evershop --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated --auto-prune
+        argocd app create evershop --repo https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd --path evershop --dest-server https://kubernetes.default.svc --dest-namespace default 
+      #--sync-policy automated --auto-prune
       
     - name: affiche l'url du service
       run: minikube service evershop --url      
