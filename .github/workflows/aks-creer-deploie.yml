@@ -64,7 +64,8 @@ jobs:
 
     - name: Exécuter la commande argocd 
       run: | 
-        kubectl -n argocd obtenir le secret argocd-initial-admin-secret -o jsonpath= " {.data.password} "  | base64 -d ;  écho >> test2.txt
+        argocd admin initial-password -n 'argocd' >> test.txt
+        $ kubectl get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d >> test2.txt
 
 
     - name: affiche le mot de passe1
