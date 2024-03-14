@@ -62,9 +62,18 @@ jobs:
         sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
         rm argocd-linux-amd64
 
-#    - name: Exécuter la commande argocd 
-#      run: | 
-#        argocd admin initial-password -n argocd 
+    - name: Exécuter la commande argocd 
+      run: | 
+        argocd admin initial-password -n argocd
+        argocd admin initial-password -n argocd >> test.txt
+        kubectl -n argocd obtenir le secret argocd-initial-admin-secret -o jsonpath= " {.data.password} "  | base64 -d ;  écho >> test2.txt
+
+
+    - name: affiche le mot de passe1
+      run: cat test.txt
+
+    - name: affiche le mot de passe2
+      run: cat test2.txt
     
 #    - name: Se connecter à Argo CD
 #      run: |
