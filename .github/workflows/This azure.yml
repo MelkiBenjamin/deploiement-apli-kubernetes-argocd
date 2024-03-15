@@ -33,7 +33,7 @@ on:
   push:
   workflow_dispatch:
 
-env:
+#env:
 #  AZURE_CONTAINER_REGISTRY: "your-azure-container-registry"
 #  CONTAINER_NAME: "your-container-name"
 #  RESOURCE_GROUP: "your-resource-group"
