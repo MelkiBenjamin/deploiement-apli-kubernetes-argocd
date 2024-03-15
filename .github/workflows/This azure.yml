@@ -35,13 +35,12 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_CONTAINER_REGISTRY: "your-azure-container-registry"
-  CONTAINER_NAME: "your-container-name"
-  RESOURCE_GROUP: "your-resource-group"
-  CLUSTER_NAME: "your-cluster-name"
-  DEPLOYMENT_MANIFEST_PATH: "your-deployment-manifest-path"
-  clientid: d2236d5b-461a-40cb-928a-04ae56ef2a4c
-  tenantid: 4579e7e3-cdfd-4a85-bcba-5ca22375763b
+#  AZURE_CONTAINER_REGISTRY: "your-azure-container-registry"
+#  CONTAINER_NAME: "your-container-name"
+#  RESOURCE_GROUP: "your-resource-group"
+#  CLUSTER_NAME: "your-cluster-name"
+#  DEPLOYMENT_MANIFEST_PATH: "your-deployment-manifest-path"
+
 
 jobs:
   buildImage:
@@ -49,6 +48,8 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
+    container:
+        image: mcr.microsoft.com/azure-cli:latest
     steps:
       # Checks out the repository this file is in
       - uses: actions/checkout@v4
@@ -72,6 +73,8 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
+    container:
+        image: mcr.microsoft.com/azure-cli:latest
     needs: [buildImage]
     steps:
       # Checks out the repository this file is in
@@ -85,48 +88,78 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: cration de groupe
-        run: az group create --name myResourceGroup --location francecentral
+      - uses: azure/setup-kubectl@v3
+        id: install
 
-      - name: creer le cluster aks
-        uses: actions/aks_create_action@v1
-        with:
-            CLUSTER_NAME: monCluster
-            RESOURCE_GROUP_NAME: myResourceGroup
-            STORAGE_ACCOUNT_NAME: newgroup27941
-            STORAGE_CONTAINER_NAME: testclustertstate
-            STORAGE_ACCESS_KEY: ******
-            ARM_CLIENT_ID: ******
-            ARM_CLIENT_SECRET: ******
-            ARM_SUBSCRIPTION_ID: ******
-            ARM_TENANT_ID: ******
-            ACTION_TYPE: create # optional
-            CLUSTER_SIZE: dev # optional
-            CREATE_ACR: false # optional
+      - name: creation de groupe
+        run: az group create --name monResourceGroup --location francecentral
+    
+      - name: creation de cluster aks
+        run: az aks create --resource-group myResourceGroup --name myAKSCluster --enable-managed-identity --node-count 1 --generate-ssh-keys
+
+#      - name: creer le cluster aks
+#        uses: actions/aks_create_action@v1
+#        with:
+#            CLUSTER_NAME: monCluster
+#            RESOURCE_GROUP_NAME: monResourceGroup
+#            STORAGE_ACCOUNT_NAME: monstorageaccount
+#            STORAGE_CONTAINER_NAME: mon storage container
+#            STORAGE_ACCESS_KEY: ******
+#            ARM_CLIENT_ID: ******
+#            ARM_CLIENT_SECRET: ******
+#            ARM_SUBSCRIPTION_ID: ********
+#            ARM_TENANT_ID: ********
 
       - name: connexion au cluster
         run: az aks get-credentials --resource-group myResourceGroup --name monCluster
 
-      # Use kubelogin to configure your kubeconfig for Azure auth
-      - name: Set up kubelogin for non-interactive login
-        uses: azure/use-kubelogin@v1
-        with:
-          kubelogin-version: 'v0.0.25'
+#      # Use kubelogin to configure your kubeconfig for Azure auth
+#      - name: Set up kubelogin for non-interactive login
+#        uses: azure/use-kubelogin@v1
+#        with:
+#          kubelogin-version: 'v0.0.25'
 
-      # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
-      - name: Get K8s context
-        uses: azure/aks-set-context@v3
-        with:
-          resource-group: ${{ env.RESOURCE_GROUP }}
-          cluster-name: ${{ env.CLUSTER_NAME }}
-          admin: 'false'
-          use-kubelogin: 'true'
+#      # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
+#      - name: Get K8s context
+#        uses: azure/aks-set-context@v3
+#        with:
+#          resource-group: ${{ env.RESOURCE_GROUP }}
+#          cluster-name: ${{ env.CLUSTER_NAME }}
+#          admin: 'false'
+#          use-kubelogin: 'true'
 
-      # Deploys application based on given manifest file
-      - name: Deploys application
-        uses: Azure/k8s-deploy@v4
-        with:
-          action: deploy
-          manifests: ${{ env.DEPLOYMENT_MANIFEST_PATH }}
-          images: |
-            ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
+
+      - name: Setup ArgoCD CLI 
+        uses: codingprotocols/argocd-cli@v1
+
+      - name: Install cli argocd
+        uses: imajeetyadav/argocd-cli@v1
+
+      - name: Install ArgoCD
+        run: argocd install --insecure --grpc-web --create-kustomize-namespace
+
+      - name: Get ArgoCD password
+        run: argocd account update-password --account admin --password admin
+
+      - name: conexion argocd
+        run: argocd login localhost:8080 --insecure --username admin --password admin
+
+      - name: Create ArgoCD Application
+        run: |
+          kubectl config set-context --current --namespace=argocd
+          argocd app create evershop --repo https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd --path evershop --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated --auto-prune
+        
+      - name: affiche l'url du service
+        run: |
+            kubectl get service
+            minikube service evershop --url 
+  
+
+#      # Deploys application based on given manifest file
+#      - name: Deploys application
+#        uses: Azure/k8s-deploy@v4
+#        with:
+#          action: deploy
+#          manifests: ${{ env.DEPLOYMENT_MANIFEST_PATH }}
+#          images: |
+#            ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
