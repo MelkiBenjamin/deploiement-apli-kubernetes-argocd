@@ -53,8 +53,8 @@ jobs:
     - name: sleep 30s
       run: sleep 30s
 
-    - name: redirection pôrt argocd
-      run: kubectl port-forward svc/argocd-server -n argocd 8080:443 &
+    - name: redirection port argocd
+      run: kubectl patch svc argocd-server -n argocd -p "spec: {type: LoadBalancer}"
 
     - name: install cli argocd
       run: |
@@ -66,7 +66,6 @@ jobs:
       run: | 
         argocd admin initial-password -n 'argocd' >> test.txt
         kubectl get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d >> test2.txt
-
 
     - name: affiche le mot de passe1
       run: cat test.txt
