@@ -31,7 +31,6 @@ name: Build and deploy an app to AKS
 
 on:
   push:
-    branches: [$default-branch]
   workflow_dispatch:
 
 env:
