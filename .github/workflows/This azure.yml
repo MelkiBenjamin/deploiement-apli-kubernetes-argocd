@@ -53,20 +53,13 @@ jobs:
       # Checks out the repository this file is in
       - uses: actions/checkout@v4
 
-      - name: jeton azure
-        run: | 
-            az account get-access-token
-            az account get-access-token --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
       - name: creation de groupe
         run: az group create --name monResourceGroup --location francecentral
-#      # Logs in with your Azure credentials
-#      - name: Azure login
-#        uses: azure/login@v1.4.6
-#        with:
-#          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-#          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-#          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      # Logs in with your Azure credentials
+      - name: Azure login
+        uses: azure/login@v1.4.6
+        with:
+           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
 #      # Builds and pushes an image up to your Azure Container Registry
 #      - name: Build and push image to ACR
@@ -97,8 +90,8 @@ jobs:
       - uses: azure/setup-kubectl@v3
         id: install
 
-      - name: creation de groupe
-        run: az group create --name monResourceGroup --location francecentral
+#      - name: creation de groupe
+#        run: az group create --name monResourceGroup --location francecentral
     
       - name: creation de cluster aks
         run: az aks create --resource-group myResourceGroup --name myAKSCluster --enable-managed-identity --node-count 1 --generate-ssh-keys
@@ -133,7 +126,6 @@ jobs:
 #          cluster-name: ${{ env.CLUSTER_NAME }}
 #          admin: 'false'
 #          use-kubelogin: 'true'
-
 
       - name: Setup ArgoCD CLI 
         uses: codingprotocols/argocd-cli@v1
