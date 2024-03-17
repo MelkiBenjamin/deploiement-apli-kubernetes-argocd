@@ -143,15 +143,26 @@ jobs:
         uses: Azure/k8s-deploy@v4
         with:
           action: deploy
-          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/ha/install.yaml
+          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/core-install.yaml
           images: |
              quay.io/argoproj/argocd:v2.10.3
 
       - name: Get ArgoCD password
         run: argocd account update-password --account admin --password admin
 
+      - name: Change le service argocd-server en LoadBalancer
+        run: kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}'
+
+      - name: kubectl get svc
+        run: kubectl get svc -n argocd
+
+      - name: mdp argocd
+        run: | 
+            mdp=argocd admin initial-password -n argocd
+            ip=$(kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
       - name: conexion argocd
-        run: argocd login localhost:8080 --insecure --username admin --password admin
+        run: argocd $ip --insecure --username admin --password $mdp
 
       - name: Create ArgoCD Application
         run: |
