@@ -165,7 +165,7 @@ jobs:
             mdp=$(argocd admin initial-password -n argocd)
 
       - name: conexion argocd
-        run: argocd login $ip --insecure --username admin --password $mdp
+        run: argocd login $ip --insecure --username admin --password "$mdp"
 
       - name: Get ArgoCD password
         run: argocd account update-password --account admin --password admin
