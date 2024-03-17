@@ -83,18 +83,16 @@ jobs:
       - name: Azure login
         uses: azure/login@v1.4.6
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - uses: azure/setup-kubectl@v3
         id: install
 
-#      - name: creation de groupe
-#        run: az group create --name monResourceGroup --location francecentral
+      - name: creation de groupe
+        run: az group create --name monResourceGroup --location francecentral
     
       - name: creation de cluster aks
-        run: az aks create --resource-group myResourceGroup --name myAKSCluster --enable-managed-identity --node-count 1 --generate-ssh-keys
+        run: az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys
 
 #      - name: creer le cluster aks
 #        uses: actions/aks_create_action@v1
@@ -127,14 +125,23 @@ jobs:
 #          admin: 'false'
 #          use-kubelogin: 'true'
 
-      - name: Setup ArgoCD CLI 
-        uses: codingprotocols/argocd-cli@v1
+#      - name: Setup ArgoCD CLI 
+#        uses: codingprotocols/argocd-cli@v1
 
       - name: Install cli argocd
         uses: imajeetyadav/argocd-cli@v1
 
-      - name: Install ArgoCD
-        run: argocd install --insecure --grpc-web --create-kustomize-namespace
+#      - name: Install ArgoCD
+#        run: argocd install --insecure --grpc-web --create-kustomize-namespace
+      # Deploys application based on given manifest file
+
+      - name: Deploys application
+        uses: Azure/k8s-deploy@v4
+        with:
+          action: deploy
+          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/ha/install.yaml
+          images: |
+             quay.io/argoproj/argocd:v2.10.3
 
       - name: Get ArgoCD password
         run: argocd account update-password --account admin --password admin
@@ -152,12 +159,6 @@ jobs:
             kubectl get service
             minikube service evershop --url 
   
-
-#      # Deploys application based on given manifest file
-#      - name: Deploys application
-#        uses: Azure/k8s-deploy@v4
-#        with:
-#          action: deploy
-#          manifests: ${{ env.DEPLOYMENT_MANIFEST_PATH }}
-#          images: |
-#            ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
+      - name: creer namespace argocd
+        run: kubectl create namespace argocd
+            
