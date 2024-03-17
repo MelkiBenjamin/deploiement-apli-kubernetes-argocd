@@ -159,14 +159,20 @@ jobs:
            echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
            kubectl patch svc argocd-server -n argocd --type merge --patch "$(cat patch.json)"
 
-      - name: conexion argocd
-        env:
-          ip: (kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-          mdp: (argocd admin initial-password -n argocd)
-        run: argocd login $ip --insecure --username admin --password "$mdp"
+#      - name: conexion argocd
+#        env:
+#          ip: (kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+#          mdp: (argocd admin initial-password -n argocd)
+#        run: argocd login $ip --insecure --username admin --password "$mdp"
 
       - name: Get ArgoCD password
         run: argocd account update-password --account admin --password admin
+
+      - name: conexion argocd
+        env:
+          ip: (kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+#          mdp: (argocd admin initial-password -n argocd)
+        run: argocd login $ip --insecure --username admin --password admin
 
       - name: Create ArgoCD Application
         run: |
