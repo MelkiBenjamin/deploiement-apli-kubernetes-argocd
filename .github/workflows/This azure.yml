@@ -92,7 +92,7 @@ jobs:
         run: az group create --name monResourceGroup --location francecentral
     
       - name: creation de cluster aks
-        run: az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys 
+        run: az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
 
 #      - name: creer le cluster aks
 #        uses: actions/aks_create_action@v1
@@ -125,11 +125,11 @@ jobs:
 #          admin: 'false'
 #          use-kubelogin: 'true'
 
-#      - name: Setup ArgoCD CLI 
-#        uses: codingprotocols/argocd-cli@v1
-
       - name: Install cli argocd
-        uses: imajeetyadav/argocd-cli@v1
+        run: |
+          curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+          rm argocd-linux-amd64
 
 #      - name: Install ArgoCD
 #        run: argocd install --insecure --grpc-web --create-kustomize-namespace
@@ -161,5 +161,3 @@ jobs:
         run: |
             kubectl get service
             minikube service evershop --url 
-
-            
