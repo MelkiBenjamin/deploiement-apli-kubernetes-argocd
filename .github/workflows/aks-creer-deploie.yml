@@ -53,8 +53,8 @@ jobs:
     - name: sleep 30s
       run: sleep 30s
 
-    - name: redirection port argocd
-      run: kubectl patch svc argocd-server -n argocd -p "spec: {type: LoadBalancer}"
+#    - name: redirection port argocd
+#      run: kubectl patch svc argocd-server -n argocd -p "spec: {type: LoadBalancer}"
 
     - name: install cli argocd
       run: |

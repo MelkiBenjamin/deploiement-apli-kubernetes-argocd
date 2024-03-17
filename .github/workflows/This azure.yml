@@ -140,10 +140,11 @@ jobs:
         run: kubectl create namespace argocd
 
       - name: Deploys application
-        uses: Azure/k8s-deploy@v4
+        uses: Azure/k8s-deploy@v4.10.0
         with:
+          namespace: argocd
           action: deploy
-          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/core-install.yaml
+          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
           images: |
              quay.io/argoproj/argocd:v2.10.3
 
@@ -161,7 +162,7 @@ jobs:
       - name: mdp argocd
         run: | 
             ip=$(kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-            mdp=argocd admin initial-password -n argocd
+            mdp=$(argocd admin initial-password -n argocd)
 
       - name: conexion argocd
         run: argocd login $ip --insecure --username admin --password $mdp
