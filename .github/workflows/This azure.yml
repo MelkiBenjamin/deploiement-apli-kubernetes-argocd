@@ -151,7 +151,7 @@ jobs:
         run: argocd account update-password --account admin --password admin
 
       - name: Change le service argocd-server en LoadBalancer
-        run: kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}'
+        run: kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 
       - name: kubectl get svc
         run: kubectl get svc -n argocd
