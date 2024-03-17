@@ -57,7 +57,7 @@ jobs:
 #        run: az group create --name monResourceGroup --location francecentral
       # Logs in with your Azure credentials
       - name: Azure login
-        uses: azure/login@v1.4.6
+        uses: Azure/login@v2.0.0
         with:
            creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -81,11 +81,11 @@ jobs:
 
       # Logs in with your Azure credentials
       - name: Azure login
-        uses: azure/login@v1.4.6
+        uses: Azure/login@v2.0.0
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: azure/setup-kubectl@v3
+      - uses: Azure/setup-kubectl@v4.0.0      
         id: install
 
       - name: creation de groupe
@@ -110,20 +110,20 @@ jobs:
       - name: connexion au cluster
         run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
-#      # Use kubelogin to configure your kubeconfig for Azure auth
-#      - name: Set up kubelogin for non-interactive login
-#        uses: azure/use-kubelogin@v1
-#        with:
-#          kubelogin-version: 'v0.0.25'
+      # Use kubelogin to configure your kubeconfig for Azure auth
+      - name: Set up kubelogin for non-interactive login
+        uses: Azure/use-kubelogin@v1.2
+        with:
+          kubelogin-version: 'v0.0.25'
 
-#      # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
-#      - name: Get K8s context
-#        uses: azure/aks-set-context@v3
-#        with:
-#          resource-group: ${{ env.RESOURCE_GROUP }}
-#          cluster-name: ${{ env.CLUSTER_NAME }}
-#          admin: 'false'
-#          use-kubelogin: 'true'
+      # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
+      - name: Get K8s context
+        uses: Azure/aks-set-context@v4.0.0
+        with:
+          resource-group: monResourceGroup
+          cluster-name: monClusterAKS
+          admin: 'false'
+          use-kubelogin: 'true'
 
       - name: Install cli argocd
         run: |
@@ -159,12 +159,10 @@ jobs:
            echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
            kubectl patch svc argocd-server -n argocd --type merge --patch "$(cat patch.json)"
 
-      - name: mdp argocd
-        run: | 
-            ip=$(kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-            mdp=$(argocd admin initial-password -n argocd)
-
       - name: conexion argocd
+        env:
+          ip: $(kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          mdp: $(argocd admin initial-password -n argocd)
         run: argocd login $ip --insecure --username admin --password "$mdp"
 
       - name: Get ArgoCD password
