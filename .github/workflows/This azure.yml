@@ -89,10 +89,10 @@ jobs:
         id: install
 
       - name: creation de groupe
-        run: az group create --name monResourceGroup --location francecentral
+        run: az group create --name monResourceGroup2 --location francecentral
     
       - name: creation de cluster aks
-        run: az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
+        run: az aks create --resource-group monResourceGroup2 --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
 
 #      - name: creer le cluster aks
 #        uses: actions/aks_create_action@v1
@@ -108,7 +108,7 @@ jobs:
 #            ARM_TENANT_ID: ********
 
       - name: connexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup2 --name monClusterAKS
 
 #      # Use kubelogin to configure your kubeconfig for Azure auth
 #      - name: Set up kubelogin for non-interactive login
@@ -147,9 +147,6 @@ jobs:
           images: |
              quay.io/argoproj/argocd:v2.10.3
 
-      - name: Get ArgoCD password
-        run: argocd account update-password --account admin --password admin
-
       - name: redirection de port
         run: |
            echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
@@ -165,6 +162,9 @@ jobs:
 
       - name: conexion argocd
         run: argocd login $ip --insecure --username admin --password $mdp
+
+      - name: Get ArgoCD password
+        run: argocd account update-password --account admin --password admin
 
       - name: Create ArgoCD Application
         run: |
