@@ -46,7 +46,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container:
         image: mcr.microsoft.com/azure-cli:latest
     steps:
@@ -71,7 +71,7 @@ jobs:
       actions: read
       contents: read
       id-token: write
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container:
         image: mcr.microsoft.com/azure-cli:latest
     needs: [buildImage]
