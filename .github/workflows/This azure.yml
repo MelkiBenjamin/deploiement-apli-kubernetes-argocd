@@ -150,19 +150,21 @@ jobs:
       - name: Get ArgoCD password
         run: argocd account update-password --account admin --password admin
 
-      - name: Change le service argocd-server en LoadBalancer
-        run: kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+      - name: redirection de port
+        run: |
+           echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
+           kubectl patch svc argocd-server -n argocd --type merge --patch "$(cat patch.json)"
 
       - name: kubectl get svc
         run: kubectl get svc -n argocd
 
       - name: mdp argocd
         run: | 
-            mdp=argocd admin initial-password -n argocd
             ip=$(kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            mdp=argocd admin initial-password -n argocd
 
       - name: conexion argocd
-        run: argocd $ip --insecure --username admin --password $mdp
+        run: argocd login $ip --insecure --username admin --password $mdp
 
       - name: Create ArgoCD Application
         run: |
