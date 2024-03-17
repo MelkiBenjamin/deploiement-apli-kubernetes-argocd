@@ -162,7 +162,7 @@ jobs:
       - name: conexion argocd
         env:
           ip: $(kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-          mdp: $(argocd admin initial-password -n argocd)
+          mdp: $(argocd admin initial-password --insecure -n argocd -o jsonpath='{.password}'')
         run: argocd login $ip --insecure --username admin --password "$mdp"
 
       - name: Get ArgoCD password
