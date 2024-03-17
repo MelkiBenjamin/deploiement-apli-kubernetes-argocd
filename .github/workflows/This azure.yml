@@ -53,8 +53,8 @@ jobs:
       # Checks out the repository this file is in
       - uses: actions/checkout@v4
 
-      - name: creation de groupe
-        run: az group create --name monResourceGroup --location francecentral
+#      - name: creation de groupe
+#        run: az group create --name monResourceGroup --location francecentral
       # Logs in with your Azure credentials
       - name: Azure login
         uses: azure/login@v1.4.6
