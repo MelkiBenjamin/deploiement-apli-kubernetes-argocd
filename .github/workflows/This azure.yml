@@ -187,7 +187,7 @@ jobs:
           helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3
 
       - name: argocd attendre
-        run: sleep 60
+        run: sleep 70
 
 #      - name: redirection de port
 #        run: |
@@ -225,9 +225,7 @@ jobs:
 #        run: |
 #          kubectl config set-context --current --namespace=argocd
 #          argocd app create evershop --repo https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd --path evershop --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated --auto-prune
-        
-
-      
+              
       - name: affiche l'url du service
         run: |
             kubectl get service
