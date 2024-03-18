@@ -89,13 +89,13 @@ jobs:
         id: install
 
       - name: creation de groupe
-        run: az group create --name monResourceGroup --location francecentral
+        run: az group create --name monResourceGroup2 --location francecentral
 
       - name: creation de cluster aks
 #        env:
 #          test: if az aks list --query "[].{Name:name, Power:powerState.code}" -o table | grep monClusterAKS | awk '{print $2}' | grep -q Running
         run: |
-          az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
+          az aks create --resource-group monResourceGroup2 --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
 #          if [ "$test" = "false" ]; then
 #          fi
 
@@ -113,7 +113,7 @@ jobs:
 #            ARM_TENANT_ID: ********
 
       - name: connexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup2 --name monClusterAKS
 
       # Use kubelogin to configure your kubeconfig for Azure auth
       - name: Set up kubelogin for non-interactive login
@@ -125,7 +125,7 @@ jobs:
       - name: Get K8s context
         uses: Azure/aks-set-context@v4.0.0
         with:
-          resource-group: monResourceGroup
+          resource-group: monResourceGroup2
           cluster-name: monClusterAKS
           admin: 'false'
           use-kubelogin: 'true'
@@ -182,7 +182,9 @@ jobs:
         run: helm install evershop evershop-0.1.0.tgz
 
       - name: install helm apli monitoring
-        run: helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3
 
       - name: argocd attendre
         run: sleep 60
