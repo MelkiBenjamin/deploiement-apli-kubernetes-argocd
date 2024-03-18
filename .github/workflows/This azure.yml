@@ -152,12 +152,27 @@ jobs:
         run: sleep 60
 
       - name: kubectl get svc
-        run: kubectl get svc -n argocd 
-
-      - name: redirection de port
+        run: kubectl get svc -n argocd
+        
+      - name: install helm
         run: |
-           echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
-           kubectl patch svc argocd-server -n argocd --type merge --patch "$(cat patch.json)"
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+ 
+      - name: packahe helm apli
+        run: helm package evershop
+
+      - name: install helm apli
+        run: helm install evershop evershop-0.1.0.tgz
+
+      - name: argocd attendre
+        run: sleep 60
+
+#      - name: redirection de port
+#        run: |
+#           echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
+#           kubectl patch svc argocd-server -n argocd --type merge --patch "$(cat patch.json)"
 
 #      - name: conexion argocd
 #        env:
@@ -165,21 +180,39 @@ jobs:
 #          mdp: (argocd admin initial-password -n argocd)
 #        run: argocd login $ip --insecure --username admin --password "$mdp"
 
-      - name: Get ArgoCD password
-        run: argocd account update-password --account admin --password admin
+#      - name: Get ArgoCD password
+#        run: argocd account update-password --account admin --password admin
 
-      - name: conexion argocd
-        env:
-          ip: (kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+#      - name: conexion argocd
+#        env:
+#          ip: (kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 #          mdp: (argocd admin initial-password -n argocd)
-        run: argocd login $ip --insecure --username admin --password admin
+#        run: argocd login $ip --insecure --username admin --password admin
 
-      - name: Create ArgoCD Application
-        run: |
-          kubectl config set-context --current --namespace=argocd
-          argocd app create evershop --repo https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd --path evershop --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated --auto-prune
+#      - name: Deploy ArgoCD
+#        uses: cloudposse/github-action-deploy-argocd@0.8.1
+#        id: deploy
+#        with:
+#          cluster: https://github.com/cloudposse/argocd-deploy-non-prod-test/blob/main/plat/ue2-sandbox/apps
+#          toolchain: helmfile
+#          environment: preview
+#          namespace: default
+#          application: evershop
+#          github-pat: evershop
+#          repository: https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd
+#          ref: ${{ github.event.pull_request.head.ref  }}
+#          image: nginx
+#          image-tag: latest
+#          operation: deploy
+#          debug: false
+#          synchronously: true
+
+#      - name: Create ArgoCD Application
+#        run: |
+#          kubectl config set-context --current --namespace=argocd
+#          argocd app create evershop --repo https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd --path evershop --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated --auto-prune
         
       - name: affiche l'url du service
         run: |
             kubectl get service
-            minikube service evershop --url 
+            
