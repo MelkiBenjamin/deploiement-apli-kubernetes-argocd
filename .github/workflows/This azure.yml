@@ -89,10 +89,10 @@ jobs:
         id: install
 
       - name: creation de groupe
-        run: az group create --name monResourceGroup --location francecentral
+        run: az group create --name monResourceGroup2 --location francecentral
     
       - name: creation de cluster aks
-        run: az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
+        run: az aks create --resource-group monResourceGroup2 --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
 
 #      - name: creer le cluster aks
 #        uses: actions/aks_create_action@v1
@@ -108,7 +108,7 @@ jobs:
 #            ARM_TENANT_ID: ********
 
       - name: connexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup2 --name monClusterAKS
 
       # Use kubelogin to configure your kubeconfig for Azure auth
       - name: Set up kubelogin for non-interactive login
@@ -120,7 +120,7 @@ jobs:
       - name: Get K8s context
         uses: Azure/aks-set-context@v4.0.0
         with:
-          resource-group: monResourceGroup
+          resource-group: monResourceGroup2
           cluster-name: monClusterAKS
           admin: 'false'
           use-kubelogin: 'true'
@@ -153,13 +153,11 @@ jobs:
 
       - name: kubectl get svc
         run: kubectl get svc -n argocd
-        
+      
       - name: install helm
-        run: |
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
- 
+        uses: Azure/setup-helm@v4
+        id: install1
+     
       - name: packahe helm apli
         run: helm package evershop
 
