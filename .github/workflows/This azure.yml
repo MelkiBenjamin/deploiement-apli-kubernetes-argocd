@@ -89,7 +89,12 @@ jobs:
         id: install
 
       - name: creation de groupe
-        run: az group create --name monResourceGroup2 --location francecentral
+        env:
+          test: if az aks list --query "[].{Name:name, Power:powerState.code}" -o table | grep monClusterAKS | awk '{print $2}' | grep -q Running
+        run: |
+          if [ "$test" = "false" ]; then
+            az group create --name monResourceGroup2 --location francecentral
+          fi
     
       - name: creation de cluster aks
         run: az aks create --resource-group monResourceGroup2 --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
@@ -156,25 +161,28 @@ jobs:
       
       - name: install helm
         uses: Azure/setup-helm@v4
-        id: install1
+        id: install-helm
 
-      - name: Deploy
-        uses: cloudposse/github-action-deploy-helmfile@main
-        id: deploy
-        with:
-          cluster: monClusterAKS
-          environment: evershop
-          namespace: default
-          image: evershop
-          image-tag: latest
-          operation: deploy
-          debug: false
+#      - name: Deploy
+#        uses: cloudposse/github-action-deploy-helmfile@main
+#        id: deploy
+#        with:
+#          cluster: monClusterAKS
+#          environment: evershop
+#          namespace: default
+#          image: evershop
+#          image-tag: latest
+#          operation: deploy
+#          debug: false
      
-#      - name: packahe helm apli
-#        run: helm package evershop
+      - name: packahe helm apli
+        run: helm package evershop
 
-#      - name: install helm apli
-#        run: helm install evershop evershop-0.1.0.tgz
+      - name: install helm apli
+        run: helm install evershop evershop-0.1.0.tgz
+
+      - name: install helm apli monitoring
+        run: helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3
 
       - name: argocd attendre
         run: sleep 60
@@ -216,6 +224,8 @@ jobs:
 #          kubectl config set-context --current --namespace=argocd
 #          argocd app create evershop --repo https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd --path evershop --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated --auto-prune
         
+
+      
       - name: affiche l'url du service
         run: |
             kubectl get service
