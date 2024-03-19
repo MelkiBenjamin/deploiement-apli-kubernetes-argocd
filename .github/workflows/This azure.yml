@@ -61,11 +61,11 @@ jobs:
         with:
            creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Official SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v2.0.1
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: 127.0.0.1:9000
+#      - name: Official SonarQube Scan
+#        uses: SonarSource/sonarqube-scan-action@v2.0.1
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_HOST_URL: 127.0.0.1:9000
 
 #      # Builds and pushes an image up to your Azure Container Registry
 #      - name: Build and push image to ACR
