@@ -1,5 +1,8 @@
+annotations:
+  category: Infrastructure
+
 apiVersion: v2
-name: evershop
+name: cells
 description: A Helm chart for Kubernetes
 
 # A chart can be either an 'application' or a 'library' chart.
@@ -15,10 +18,71 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.1.0
+version: 0.1.1
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "1.16.0"
+appVersion: "v4"
+
+home: https://pydio.com
+icon: https://pydio.com/sites/all/themes/pydio_theme/images/logoPydioWhite.png
+
+sources:
+  - https://github.com/pydio/cells
+
+maintainers:
+  - name: Pydio
+    url: https://github.com/pydio/cells/tools/kubernetes
+
+keywords:
+  - pydio
+  - cells
+  - storage
+  - object-storage
+  - s3
+  - cluster
+
+dependencies:
+  - name: mariadb
+    condition: mariadb.enabled
+    repository: https://charts.bitnami.com/bitnami
+    version: x.x.x
+  - name: mariadb-galera
+    condition: mariadb-galera.enabled
+    repository: https://charts.bitnami.com/bitnami
+    version: x.x.x
+  - name: redis
+    condition: redis.enabled
+    repository: https://charts.bitnami.com/bitnami
+    version: x.x.x
+  - name: nats
+    condition: nats.enabled
+    repository: https://charts.bitnami.com/bitnami
+    version: x.x.x
+  - name: mongodb
+    condition: mongodb.enabled
+    repository: https://charts.bitnami.com/bitnami
+    version: x.x.x
+  - name: etcd
+    condition: etcd.enabled
+    repository: https://charts.bitnami.com/bitnami
+    version: x.x.x
+  - name: minio
+    condition: minio.enabled
+    repository: https://charts.bitnami.com/bitnami
+    version: x.x.x
+  - name: ingress-nginx
+    condition: ingress.enabled
+    repository: https://kubernetes.github.io/ingress-nginx
+    version: x.x.x
+  - name: vault  
+    condition: vault.enabled
+    repository: https://helm.releases.hashicorp.com
+    version: x.x.x
+  - name: cert-manager
+    condition: tls.enabled
+    repository: https://charts.jetstack.io
+    version: x.x.x
+

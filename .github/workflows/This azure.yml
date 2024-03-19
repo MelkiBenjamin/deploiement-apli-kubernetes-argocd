@@ -156,22 +156,26 @@ jobs:
       - name: argocd attendre
         run: sleep 60
 
-      - name: kubectl get svc
-        run: kubectl get svc -n argocd
+      - name: kubectl get pods
+        run: kubectl get pods -n argocd
 
       - name: redirection de port
         run: |
           echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
           kubectl patch svc argocd-server -n argocd --type merge --patch "$(cat patch.json)"
+      
+      - name: argocd attendre
+        run: sleep 30
 
-      - name: conexion argocd
-        env:
-          ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
-          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-        run: argocd login $ip --username admin --password $mdp --insecure
+#      - name: conexion argocd
+#        env:
+#          ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+#          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+#        run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) --insecure
 
-      - name: Get ArgoCD password
-        run: argocd account update-password --account admin --password ${{ secrets.ARGOCD }}
+
+#      - name: Get ArgoCD password
+#        run: argocd account update-password --account admin --password ${{ secrets.ARGOCD }}
 
       - name: install helm
         uses: Azure/setup-helm@v4
@@ -201,7 +205,7 @@ jobs:
           helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3
 
       - name: argocd attendre
-        run: sleep 70
+        run: sleep 60
 
 #      - name: Deploy ArgoCD
 #        uses: cloudposse/github-action-deploy-argocd@0.8.1

@@ -1,226 +1,276 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rabbitmq
+  name: {{ include "cells.fullname" . }}
+  labels:
+    {{- include "cells.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  {{- end }}
   selector:
     matchLabels:
-      app: rabbitmq
+      {{- include "cells.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }} 
+      {{- end}}
       labels:
-        app: rabbitmq
+        {{- include "cells.selectorLabels" . | nindent 8 }}
     spec:
-      nodeSelector:
-        "kubernetes.io/os": linux
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "cells.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-      - name: rabbitmq
-        image: mcr.microsoft.com/mirror/docker/library/rabbitmq:3.10-management-alpine
-        ports:
-        - containerPort: 5672
-          name: rabbitmq-amqp
-        - containerPort: 15672
-          name: rabbitmq-http
-        env:
-        - name: RABBITMQ_DEFAULT_USER
-          value: "username"
-        - name: RABBITMQ_DEFAULT_PASS
-          value: "password"
-        resources:
-          requests:
-            cpu: 10m
-            memory: 128Mi
-          limits:
-            cpu: 250m
-            memory: 256Mi
-        volumeMounts:
-        - name: rabbitmq-enabled-plugins
-          mountPath: /etc/rabbitmq/enabled_plugins
-          subPath: enabled_plugins
-      volumes:
-      - name: rabbitmq-enabled-plugins
-        configMap:
-          name: rabbitmq-enabled-plugins
-          items:
-          - key: rabbitmq_enabled_plugins
-            path: enabled_plugins
----
-apiVersion: v1
-data:
-  rabbitmq_enabled_plugins: |
-    [rabbitmq_management,rabbitmq_prometheus,rabbitmq_amqp1_0].
-kind: ConfigMap
-metadata:
-  name: rabbitmq-enabled-plugins
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: rabbitmq
-spec:
-  selector:
-    app: rabbitmq
-  ports:
-    - name: rabbitmq-amqp
-      port: 5672
-      targetPort: 5672
-    - name: rabbitmq-http
-      port: 15672
-      targetPort: 15672
-  type: ClusterIP
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: order-service
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: order-service
-  template:
-    metadata:
-      labels:
-        app: order-service
-    spec:
-      nodeSelector:
-        "kubernetes.io/os": linux
-      containers:
-      - name: order-service
-        image: ghcr.io/azure-samples/aks-store-demo/order-service:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: ORDER_QUEUE_HOSTNAME
-          value: "rabbitmq"
-        - name: ORDER_QUEUE_PORT
-          value: "5672"
-        - name: ORDER_QUEUE_USERNAME
-          value: "username"
-        - name: ORDER_QUEUE_PASSWORD
-          value: "password"
-        - name: ORDER_QUEUE_NAME
-          value: "orders"
-        - name: FASTIFY_ADDRESS
-          value: "0.0.0.0"
-        resources:
-          requests:
-            cpu: 1m
-            memory: 50Mi
-          limits:
-            cpu: 75m
-            memory: 128Mi
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh"]
+          args:
+            ['-c', 'source /var/cells-install/source && cells start']
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: CELLS_BIND_ADDRESS
+              value: 0.0.0.0
+            - name: CELLS_WORKING_DIR
+              value: /var/cells
+            - name: PYDIO_LOG
+              value: info
+            {{- if .Values.etcd.enabled }}
+            {{- if or .Values.etcd.auth.rbac.create .Values.etcd.auth.rbac.enabled }}
+            - name: ETCD_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "etcd.secretName" .Subcharts.etcd }}
+                  key: {{ include "etcd.secretPasswordKey" .Subcharts.etcd }}
+            {{- end}}
+            - name: CELLS_CONFIG
+              value: {{ include "cells.etcdURL" (list . "/config") }}
+            - name: CELLS_VAULT
+              value: {{ include "cells.etcdURL" (list . "/vault") }}
+            - name: CELLS_REGISTRY
+              value: {{ include "cells.etcdURL" (list . "/registry") }}
+            {{- end }}
+            {{- if .Values.nats.enabled }}
+            - name: CELLS_BROKER
+              value: {{ include "cells.natsURL" . }}
+            {{- end }}
+            {{- if and (or .Values.redis.enabled .Values.redis.shortcacheEnabled) .Values.redis.auth.enabled }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "redis.secretName" .Subcharts.redis }}
+                  key: {{ include "redis.secretPasswordKey" .Subcharts.redis }}
+            {{- end }}
+            {{- if .Values.redis.enabled }}
+            - name: CELLS_CACHE
+              value: {{ include "cells.redisURL" (list . "/cache") }}
+            {{- if .Values.redis.shortcacheEnabled }}
+            - name: CELLS_SHORTCACHE
+              value: {{ include "cells.redisURL" (list . "/shortcache") }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.vault.enabled }}
+            - name: CELLS_KEYRING
+              value: {{ include "cells.vaultURL" . }}/secret?key=keyring
+            - name: CELLS_CERTS_STORE
+              value: {{ include "cells.vaultURL" . }}/caddycerts
+            {{- end }}
+            {{- if .Values.extraEnvVars }}
+            {{- toYaml .Values.extraEnvVars | nindent 12}}
+            {{- end }}
+          envFrom:
+            {{- if .Values.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.extraEnvVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.extraEnvVarsSecret "context" $) }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+            - name: discovery
+              containerPort: {{ .Values.service.discoveryPort }}
+              protocol: TCP
+          volumeMounts:
+            - name: cells
+              mountPath: /var/cells-install
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+              {{- if .Values.service.tlsconfig }}
+              scheme: HTTPS
+              {{- else }}
+              scheme: HTTP
+              {{- end }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
       initContainers:
-      - name: wait-for-rabbitmq
-        image: busybox
-        command: ['sh', '-c', 'until nc -zv rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done;']
-        resources:
-          requests:
-            cpu: 1m
-            memory: 50Mi
-          limits:
-            cpu: 75m
-            memory: 128Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: order-service
-spec:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 3000
-    targetPort: 3000
-  selector:
-    app: order-service
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: product-service
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: product-service
-  template:
-    metadata:
-      labels:
-        app: product-service
-    spec:
+        {{- if .Values.etcd.enabled }}
+        - name: wait-for-etcd
+          image: busybox
+          command: ["sh", "-c", 'until nc -zw2 {{ include "cells.etcdHost" . | quote }} {{ include "cells.etcdPort" . | quote }}; do echo waiting for etcd; sleep 2; done']
+        {{- end }}
+        {{- if .Values.redis.enabled }}
+        - name: wait-for-redis
+          image: busybox
+          command: ["sh", "-c", 'until nc -zw2 {{ include "cells.redisHost" . | quote }} {{ include "cells.redisPort" . | quote }}; do echo waiting for etcd; sleep 2; done']
+        {{- end }}
+        {{- if .Values.nats.enabled }}
+        - name: wait-for-nats
+          image: busybox
+          command: ["sh", "-c", 'until nc -zw2 {{ include "cells.natsHost" . | quote }} {{ include "cells.natsPort" . | quote }}; do echo waiting for etcd; sleep 2; done']
+        {{- end }}
+        {{- if .Values.vault.enabled }}
+        - name: wait-for-vault
+          image: busybox
+          command: ["sh", "-c", 'until nc -zw2 {{ include "cells.vaultHost" . | quote }} {{ include "cells.vaultPort" . | quote }}; do echo waiting for vault; sleep 2; done']
+        {{- end }}
+        {{- if and .Values.etcd.enabled .Values.etcd.auth.client.secureTransport }}
+        - name: install-certs-etcd
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              sleep 3
+              source /var/cells-install/source
+              for i in /var/certs/*/*; do
+                cells admin cert import $i --uuid $(basename $(dirname $i))-$(basename $i);
+              done
+          env:
+            - name: CELLS_CERTS_STORE
+              value: {{ include "cells.vaultURL" . }}/caddycerts
+          volumeMounts:
+            - name: cells
+              mountPath: /var/cells-install
+            {{- if and .Values.etcd.enabled .Values.etcd.auth.client.secureTransport }}
+            - name: etcd-secret
+              mountPath: /var/certs/etcd
+            {{- end }}
+            {{- if and .Values.redis.enabled .Values.redis.tls.enabled }}
+            - name: redis-secret
+              mountPath: /var/certs/redis
+            {{- end }}
+            {{- if and .Values.minio.enabled .Values.minio.tls.enabled }}
+            - name: minio-secret
+              mountPath: /var/certs/minio
+            {{- end }}
+        {{- end }}
+        - name: install
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              sleep 3
+              source /var/cells-install/source
+              if ! cells admin config check; then 
+                cells configure
+              fi
+              sleep 3
+          env:
+            - name: CELLS_INSTALL_YAML
+              value: /var/cells-install/install-conf.yaml
+            {{- if .Values.etcd.enabled }}
+            {{- if or .Values.etcd.auth.rbac.create .Values.etcd.auth.rbac.enabled }}
+            - name: ETCD_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "etcd.secretName" .Subcharts.etcd }}
+                  key: {{ include "etcd.secretPasswordKey" .Subcharts.etcd }}
+            {{- end }}
+            - name: CELLS_CONFIG
+              value: {{ include "cells.etcdURL" (list . "/config") }}
+            - name: CELLS_VAULT
+              value: {{ include "cells.etcdURL" (list . "/vault") }}
+            {{- end }}
+            {{- if .Values.vault.enabled }}
+            - name: CELLS_KEYRING
+              value: {{ include "cells.vaultURL" . }}/secret?key=keyring
+            {{- end }}
+            {{- if .Values.mariadb.enabled }}
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-mariadb
+                  key: mariadb-root-password
+            {{- end }}
+            {{- if index .Values "mariadb-galera" "enabled" }}
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-mariadb-galera
+                  key: mariadb-root-password
+            {{- end }}
+            {{- if .Values.minio.enabled }}
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-minio
+                  key: root-user
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-minio
+                  key: root-password
+            {{- end }}
+            - name: CELLS_CERTS_STORE
+              value: {{ include "cells.vaultURL" . }}/caddycerts
+          volumeMounts:
+            - name: cells
+              mountPath: /var/cells-install
+      volumes:
+        - name: cells
+          configMap:
+            name: {{ include "cells.fullname" . }}
+        {{- if and .Values.etcd.enabled .Values.etcd.auth.client.secureTransport }}
+        - name: etcd-secret
+          secret:
+            secretName: {{ .Values.etcd.auth.client.existingSecret }}
+        {{- end }}
+        {{- if and .Values.redis.enabled .Values.redis.tls.enabled }}
+        - name: redis-secret
+          secret:
+            secretName: {{ .Values.redis.tls.existingSecret }}
+        {{- end }}
+        {{- if and .Values.minio.enabled .Values.minio.tls.enabled }}
+        - name: minio-secret
+          secret:
+            secretName: {{ .Values.minio.tls.existingSecret }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
-        "kubernetes.io/os": linux
-      containers:
-      - name: product-service
-        image: ghcr.io/azure-samples/aks-store-demo/product-service:latest
-        ports:
-        - containerPort: 3002
-        resources:
-          requests:
-            cpu: 1m
-            memory: 1Mi
-          limits:
-            cpu: 1m
-            memory: 7Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: product-service
-spec:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 3002
-    targetPort: 3002
-  selector:
-    app: product-service
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: store-front
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: store-front
-  template:
-    metadata:
-      labels:
-        app: store-front
-    spec:
-      nodeSelector:
-        "kubernetes.io/os": linux
-      containers:
-      - name: store-front
-        image: ghcr.io/azure-samples/aks-store-demo/store-front:latest
-        ports:
-        - containerPort: 8080
-          name: store-front
-        env:
-        - name: VUE_APP_ORDER_SERVICE_URL
-          value: "http://order-service:3000/"
-        - name: VUE_APP_PRODUCT_SERVICE_URL
-          value: "http://product-service:3002/"
-        resources:
-          requests:
-            cpu: 1m
-            memory: 200Mi
-          limits:
-            cpu: 1000m
-            memory: 512Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: store-front
-spec:
-  ports:
-  - port: 80
-    targetPort: 8080
-  selector:
-    app: store-front
-  type: LoadBalancer
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
