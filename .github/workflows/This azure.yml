@@ -95,7 +95,7 @@ jobs:
 #        env:
 #          test: if az aks list --query "[].{Name:name, Power:powerState.code}" -o table | grep monClusterAKS | awk '{print $2}' | grep -q Running
         run: |
-          az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
+          az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 3 --generate-ssh-keys --location francecentral
 #          if [ "$test" = "false" ]; then
 #          fi
 
