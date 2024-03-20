@@ -47,8 +47,8 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    container:
-        image: mcr.microsoft.com/azure-cli:latest
+#    container:
+#        image: mcr.microsoft.com/azure-cli:latest
     steps:
       # Checks out the repository this file is in
       - uses: actions/checkout@v4
@@ -56,10 +56,10 @@ jobs:
 #      - name: creation de groupe
 #        run: az group create --name monResourceGroup --location francecentral
       # Logs in with your Azure credentials
-      - name: Azure login
-        uses: Azure/login@v2.0.0
-        with:
-           creds: ${{ secrets.AZURE_CREDENTIALS }}
+#      - name: Azure login
+#        uses: Azure/login@v2.0.0
+#        with:
+#           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Official SonarQube Scan test
         uses: SonarSource/sonarqube-scan-action@v2.0.1
