@@ -43,9 +43,9 @@ on:
 
 jobs:
   buildImage:
-    runs-on: self-hosted
-    container:
-      image: mcr.microsoft.com/azure-cli:latest
+    runs-on: ubuntu-latest
+#    container:
+#      image: mcr.microsoft.com/azure-cli:latest
     steps:
       - uses: actions/checkout@v4
 
