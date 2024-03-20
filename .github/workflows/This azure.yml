@@ -47,7 +47,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Official SonarQube Scan test 1
+      - name: Official SonarQube Scan test
         uses: SonarSource/sonarqube-scan-action@v2.0.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
