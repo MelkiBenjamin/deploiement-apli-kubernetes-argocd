@@ -49,7 +49,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: test curl sonar
+      - name: test curl sonar 2
         run: curl ${{ secrets.SONAR_IP }}
       - name: Official SonarQube Scan test
         uses: SonarSource/sonarqube-scan-action@v2.0.1
