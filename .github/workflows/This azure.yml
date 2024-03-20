@@ -61,7 +61,7 @@ jobs:
         with:
            creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Official SonarQube Scan
+      - name: Official SonarQube Scan test
         uses: SonarSource/sonarqube-scan-action@v2.0.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
