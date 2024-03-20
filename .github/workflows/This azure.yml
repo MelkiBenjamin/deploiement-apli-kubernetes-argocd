@@ -65,7 +65,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v2.0.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: http://127.0.0.1:9000
+          SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
 
 #      # Builds and pushes an image up to your Azure Container Registry
 #      - name: Build and push image to ACR
