@@ -17,6 +17,7 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - run: ls
       - run: cat /github/workspace/sonar-project.properties
+      - run: cp sonar-project.properties /opt/sonar-scanner/conf/sonar-scanner.properties
       - uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_HOST_URL: https://192.168.0.123:9000
