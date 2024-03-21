@@ -23,6 +23,12 @@ jobs:
         env:
           SONAR_HOST_URL: https://192.168.0.123:9000  
           sonar.login: ${{ secrets.SONAR_LOGIN }}
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.tests=tests/
+            -Dsonar.verbose=true
              
       # If you wish to fail your job when the Quality Gate is red, uncomment the
       # following lines. This would typically be used to fail a deployment.
