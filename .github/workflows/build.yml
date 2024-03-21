@@ -20,6 +20,7 @@ jobs:
         env:
           SONAR_HOST_URL: https://192.168.0.123:9000
           SONAR_LOGIN: ${{ secrets.SONAR_LOGIN }}
+          SONAR.projectKey: pro
         #with:
           # Spécifiez ici les paramètres de l'analyse SonarQube
           #args: >
