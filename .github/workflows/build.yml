@@ -27,11 +27,12 @@ jobs:
         with:
           # Spécifiez ici les paramètres de l'analyse SonarQube
            args: >
+             -Dsonar.projectConfigFile=sonar-project.properties
             # -Dsonar.projectKey=gihub-aks
             #-Dsonar.sources=.
             #-Dsonar.host.url=https://192.168.0.123:9000
             #-Dsonar.login=SONAR_TOKEN: ${{ secrets.SONAR_LOGIN }}
-             -Dsonar.projectConfigFile=sonar-project.properties
+        
              
       # If you wish to fail your job when the Quality Gate is red, uncomment the
       # following lines. This would typically be used to fail a deployment.
