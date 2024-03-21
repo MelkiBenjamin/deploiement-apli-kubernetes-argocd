@@ -17,9 +17,14 @@ jobs:
       - uses: sonarsource/sonarqube-scan-action@master
         env:
        #   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          sonar.login: ${{ secrets.login }}
           sonar.projectKey: pro
-          SONAR_HOST_URL: http://192.168.0.123:9000/
+          SONAR_HOST_URL: http://192.168.0.123:9000
+        with:
+          projectBaseDir: app/src
+          args: >
+              -Dsonar.login=${{ secrets.login }}
+              -Dsonar.projectKey=pro
+              -Dsonar.verbose=true
          
 
       # If you wish to fail your job when the Quality Gate is red, uncomment the
