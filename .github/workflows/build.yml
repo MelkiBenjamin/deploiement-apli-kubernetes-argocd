@@ -17,7 +17,7 @@ jobs:
       - uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          sonar.projectKey: github-aks
+          sonar.projectKey: pro
           SONAR_HOST_URL: http://192.168.0.123:9000/
          
 
