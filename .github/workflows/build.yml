@@ -36,7 +36,7 @@ jobs:
       - name: sonarqube verfication
         run: kubectl get svc -n sonarqube
       - run: sleep 30
-      - run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube 8080:443 &
+      - run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube 9000:9000 &
       - run: curl 127.0.0.1:9000
 #      - name: redirection de port
 #        run: |
