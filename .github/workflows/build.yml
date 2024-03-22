@@ -51,13 +51,6 @@ jobs:
           SONAR_HOST_URL: 127.0.0.1:9000
           sonar.login: ${{ secrets.SONAR_LOGIN }}
           sonar.password: ${{ secrets.SONAR_password }}
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.python.coverage.reportPaths=coverage.xml
-            -Dsonar.tests=tests/
-            -Dsonar.verbose=true
-             
       # If you wish to fail your job when the Quality Gate is red, uncomment the
       # following lines. This would typically be used to fail a deployment.
       # - uses: sonarsource/sonarqube-quality-gate-action@master
