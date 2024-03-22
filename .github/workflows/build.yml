@@ -42,6 +42,7 @@ jobs:
           echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
           kubectl patch svc sonarqube-sonarqube -n sonarqube --type merge --patch "$(cat patch.json)"
 
+      - run: sleep 30
       - name: sonarqube verfication
         run: kubectl get svc -n sonarqube
           
@@ -49,6 +50,7 @@ jobs:
         env:
           SONAR_HOST_URL: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 
           sonar.login: ${{ secrets.SONAR_LOGIN }}
+          sonar.password: ${{ secrets.SONAR_password }}
         with:
           projectBaseDir: .
           args: >
