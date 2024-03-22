@@ -48,7 +48,7 @@ jobs:
       - run: sleep 120
       - name: sonarqube verfication
         run: kubectl get svc -n sonarqube
-      - run: kubectl describe get pod sonarqube-sonarqube-0 -n sonarqube
+      - run: kubectl describe pod sonarqube-sonarqube-0 -n sonarqube
       - uses: sonarsource/sonarqube-scan-action@master
         env:
           ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
