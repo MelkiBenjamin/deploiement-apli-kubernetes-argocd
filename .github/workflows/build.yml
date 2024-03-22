@@ -36,6 +36,7 @@ jobs:
       - name: sonarqube verfication
         run: kubectl get svc -n sonarqube
       - run: sleep 30
+      - run: kubectl port-forward svc/argocd-server -n argocd 8080:443 &
       - run: curl 127.0.0.1:9000
 #      - name: redirection de port
 #        run: |
