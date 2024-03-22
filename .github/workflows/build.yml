@@ -35,6 +35,7 @@ jobs:
 
       - name: sonarqube verfication
         run: kubectl get svc -n sonarqube
+      - run: sleep 30
 
       - name: redirection de port
         run: |
