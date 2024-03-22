@@ -12,16 +12,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          
       - run: ls
-      - run: curl 192.168.0.123:9000
-      - run: sudo cp sonar-project.properties /
-   #   - run: cat /github/workspace/
+          - name: installer minikube
+      - run:  |
+          curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+      - name: demarer minikube
+        run: minikube start --driver=docker
+        
+      - name: install helm
+        uses: Azure/setup-helm@v4
+        id: install-helm
+      - run: |
+          helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
+          helm repo update
+          kubectl create namespace sonarqube
+          helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube
+
+      - name: sonarqube verfication
+        run: kubectl get svc -n sonarqube
+
+      - name: redirection de port
+        run: |
+          echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
+          kubectl patch svc sonarqube --type merge --patch "$(cat patch.json)"
+          
       - uses: sonarsource/sonarqube-scan-action@master
         env:
-          SONAR_HOST_URL: https://192.168.0.123:9000  
+          SONAR_HOST_URL: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 
           sonar.login: ${{ secrets.SONAR_LOGIN }}
         with:
           projectBaseDir: .
