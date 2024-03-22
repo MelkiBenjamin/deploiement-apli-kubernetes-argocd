@@ -36,7 +36,7 @@ jobs:
       - name: sonarqube verfication
         run: kubectl get svc -n sonarqube
       - run: sleep 30
-
+      - run: curl 127.0.0.1:9000
 #      - name: redirection de port
 #        run: |
 #          echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
