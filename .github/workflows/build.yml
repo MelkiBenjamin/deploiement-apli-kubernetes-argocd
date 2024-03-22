@@ -38,22 +38,27 @@ jobs:
       - run: sleep 180
       - run: kubectl get pod -n sonarqube
       - run: kubectl get svc -n sonarqube
-      - run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube 9000:9000 &
-      - run: curl 127.0.0.1:9000
-#      - name: redirection de port
-#        run: |
-#          echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
-#          kubectl patch svc sonarqube-sonarqube -n sonarqube --type merge --patch "$(cat patch.json)"
+    #  - run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube 9000:9000 &
+    #  - run: curl 127.0.0.1:9000
+      - name: redirection de port
+        run: |
+          echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
+          kubectl patch svc sonarqube-sonarqube -n sonarqube --type merge --patch "$(cat patch.json)"
 
-#      - run: sleep 70
+      - run: sleep 70
       - name: sonarqube verfication
         run: kubectl get svc -n sonarqube
           
       - uses: sonarsource/sonarqube-scan-action@master
         env:
-          SONAR_HOST_URL: 127.0.0.1:9000
+          ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          SONAR_HOST_URL: ${{ env.ip }}
           sonar.login: ${{ secrets.SONAR_LOGIN }}
           sonar.password: ${{ secrets.SONAR_password }}
+        with:
+          projectBaseDir: app/src
+          args: >
+            -Dsonar.verbose=true
       # If you wish to fail your job when the Quality Gate is red, uncomment the
       # following lines. This would typically be used to fail a deployment.
       # - uses: sonarsource/sonarqube-quality-gate-action@master
