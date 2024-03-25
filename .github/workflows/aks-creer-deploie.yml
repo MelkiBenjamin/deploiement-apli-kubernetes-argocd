@@ -85,8 +85,7 @@ jobs:
       run: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 
     - name: affiche 2
-      run: minikube service -n argocd argocd-server | grep -o -m 4 "http://.*" | head -4 | tail -1 | sed "s/.$//"
-
+      run: minikube service -n argocd argocd-server | grep -o -m 1 "http://.*" | sed "s/.$//"
 
     - name: conexion argocd
 #      env:
