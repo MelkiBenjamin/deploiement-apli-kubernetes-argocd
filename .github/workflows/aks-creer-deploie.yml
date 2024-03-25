@@ -78,6 +78,9 @@ jobs:
     - name: minikube service argocd-server -n argocd
       run: minikube service argocd-server -n argocd
 
+    - name: sleep 120s
+      run: sleep 120s
+
     - name: affiche 1
       run: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
 
@@ -85,11 +88,11 @@ jobs:
       run: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 
     - name: affiche 2
-      run: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+      run: minikube service -n argocd argocd-server | grep -o -m 1 "http://.*"
 
     - name: conexion argocd
       env:
-        ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+        ip: minikube service -n argocd argocd-server | grep -o -m 1 "http://.*"
         mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
       run: argocd login $ip --username admin --password $mdp --insecure
 
