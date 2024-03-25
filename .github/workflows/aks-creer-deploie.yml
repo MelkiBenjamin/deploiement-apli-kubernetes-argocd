@@ -60,6 +60,12 @@ jobs:
         echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
         kubectl patch svc argocd-server -n argocd --type merge --patch "$(cat patch.json)"
 
+    - name: affiche pod
+      run: kubectl get pods -n argocd
+
+    - name: affiche svc
+      run: kubectl get svc -n argocd
+
     - name: install cli argocd
       run: |
         curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
