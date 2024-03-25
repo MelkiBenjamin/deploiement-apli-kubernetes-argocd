@@ -30,7 +30,7 @@
 name: Build and deploy an app to AKS
 
 on:
-#  push:
+  push:
   workflow_dispatch:
 
 #env:
@@ -171,6 +171,33 @@ jobs:
       - name: install helm
         uses: Azure/setup-helm@v4
         id: install-helm
+
+      - name: installer sonarqube avec helm
+        run: |
+          helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
+          helm repo update
+          kubectl create namespace sonarqube
+          helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube
+
+      - name: sonarqube verfication
+        run: kubectl get svc -n sonarqube
+
+      - name: redirection de port
+        run: |
+          echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
+          kubectl patch svc sonarqube --type merge --patch "$(cat patch.json)"
+
+      - name: sonarqube attendre
+        run: sleep 30
+
+      - name: sonarqube verfication
+        run: kubectl get svc -n sonarqube
+
+      - name: Official SonarQube Scan test
+        uses: SonarSource/sonarqube-scan-action@v2.0.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
 
 #      - name: Deploy
 #        uses: cloudposse/github-action-deploy-helmfile@main
