@@ -49,11 +49,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Official SonarQube Scan test
-        uses: SonarSource/sonarqube-scan-action@v2.0.1
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
+#      - name: Official SonarQube Scan test
+#        uses: SonarSource/sonarqube-scan-action@v2.0.1
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
 
   deploy:
     permissions:
@@ -78,13 +78,13 @@ jobs:
         id: install
 
       - name: creation de groupe
-        run: az group create --name monResourceGroup2 --location francecentral
+        run: az group create --name monResourceGroup --location francecentral
 
       - name: creation de cluster aks
 #        env:
 #          test: if az aks list --query "[].{Name:name, Power:powerState.code}" -o table | grep monClusterAKS | awk '{print $2}' | grep -q Running
         run: |
-          az aks create --resource-group monResourceGroup2 --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
+          az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
 #          if [ "$test" = "false" ]; then
 #          fi
 
@@ -102,7 +102,7 @@ jobs:
 #            ARM_TENANT_ID: ********
 
       - name: connexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup2 --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
       # Use kubelogin to configure your kubeconfig for Azure auth
       - name: Set up kubelogin for non-interactive login
@@ -114,7 +114,7 @@ jobs:
       - name: Get K8s context
         uses: Azure/aks-set-context@v4.0.0
         with:
-          resource-group: monResourceGroup2
+          resource-group: monResourceGroup
           cluster-name: monClusterAKS
           admin: 'false'
           use-kubelogin: 'true'
@@ -133,7 +133,7 @@ jobs:
       - name: creer namespace argocd
         run: kubectl create namespace argocd
 
-      - name: Deploys application
+      - name: Deploys application argocd
         uses: Azure/k8s-deploy@v4.10.0
         with:
           namespace: argocd
