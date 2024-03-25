@@ -42,9 +42,6 @@ jobs:
       - name : kubectl get svc -n sonarqube
         run: kubectl get svc -n sonarqube
 
-      - name: curl sonarqube
-        run: curl http://127.0.0.1:9000
-
       - name: Official SonarQube Scan test
         uses: SonarSource/sonarqube-scan-action@v2.0.1
         env:
