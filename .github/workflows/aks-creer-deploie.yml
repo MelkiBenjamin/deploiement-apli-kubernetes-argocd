@@ -85,12 +85,12 @@ jobs:
       run: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 
     - name: affiche 2
-      run: minikube service -n argocd argocd-server --url | echo
+      run: minikube service -n argocd argocd-server | grep -o -m 1 "http://.*"
 
     - name: conexion argocd
       env:
-        ip: "minikube service -n argocd argocd-server --url | echo"
-        mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+        ip: "minikube service -n argocd argocd-server | grep -o -m 1 'http://.*'"
+        mdp: 'kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo'
       run: argocd login $ip --username admin --password $mdp --insecure
 
 #    - name: affiche le mot de passe1
