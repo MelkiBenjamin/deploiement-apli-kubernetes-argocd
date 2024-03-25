@@ -203,7 +203,7 @@ jobs:
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3 -n monitoring
 
-      - name: argocd attendre
+      - name: attendre
         run: sleep 70
 
       - name: redirection de port
@@ -221,10 +221,10 @@ jobs:
       - name: sonarqube verfication svc
         run: kubectl get svc -n sonarqube
   
-      - name: loadbalancing
-        run: |
-          echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
-          kubectl patch svc sonarqube-sonarqube --type merge --patch "$(cat patch.json)"
+#      - name: loadbalancing
+#        run: |
+#          echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
+#          kubectl patch svc sonarqube-sonarqube --type merge --patch "$(cat patch.json)" -n sonarqube
   
       - name: sonarqube attendre
         run: sleep 30
