@@ -26,6 +26,9 @@ jobs:
       - name: conexion au cluster
         run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
+      - uses: Azure/setup-kubectl@v4.0.0      
+        id: install
+
       - name : port-forward
         run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube --address 0.0.0.0 9000 &
 
