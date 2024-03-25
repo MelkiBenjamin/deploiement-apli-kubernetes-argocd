@@ -75,6 +75,9 @@ jobs:
         sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
         rm argocd-linux-amd64
 
+    - name: minikube service argocd-server -n argocd-server
+      run: minikube service argocd-server -n argocd-server
+
     - name: affiche 1
       run: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
 
