@@ -7,8 +7,8 @@ on:
 jobs:
   deploy:
     permissions:
-      actions: write
-      contents: write
+      actions: read
+      contents: read
       id-token: write
     runs-on: ubuntu-latest
     container:
@@ -40,10 +40,10 @@ jobs:
           apk add curl
 
       - name : kubectl get svc -n sonarqube
-        run: curl http://localhost:9000
+        run: kubectl get svc -n sonarqube
 
       - name: curl sonarqube
-        run: curl http://localhost:9000
+        run: curl http://127.0.0.1:9000
 
       - name: Official SonarQube Scan test
         uses: SonarSource/sonarqube-scan-action@v2.0.1
