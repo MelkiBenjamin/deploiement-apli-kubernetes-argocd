@@ -38,7 +38,12 @@ jobs:
       - name: curl sonarqube
         run: |
           apk add curl
-          curl -v http://localhost:9000
+
+      - name : kubectl get svc -n sonarqube
+        run: curl http://localhost:9000
+
+      - name: curl sonarqube
+        run: curl http://localhost:9000
 
       - name: Official SonarQube Scan test
         uses: SonarSource/sonarqube-scan-action@v2.0.1
