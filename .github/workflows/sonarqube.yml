@@ -65,7 +65,7 @@ jobs:
       - name: Official SonarQube Scan test
         uses: SonarSource/sonarqube-scan-action@v2.0.1
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+       #   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: http://127.0.0.1:9000
           sonar.login: admin
           sonar.password: admin
