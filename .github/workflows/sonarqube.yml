@@ -39,6 +39,10 @@ jobs:
         run: |
           apk add curl
 
+      - name: curl sonarqube
+        run: |
+          curl http://localhost:9000
+
       - name : kubectl get svc -n sonarqube
         run: kubectl get svc -n sonarqube
 
