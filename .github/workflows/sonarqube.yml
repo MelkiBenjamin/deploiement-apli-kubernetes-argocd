@@ -60,7 +60,7 @@ jobs:
 
       - name: lance sonarqube
         run: |
-          sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=sonarqube -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONAR_IP }} 
+          sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=sonarqube -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONAR_IP }} -Dsonar.login=${{ secrets.SONAR_LOGIN }} -Dsonar.password=${{ secrets.SONAR_PASSWORD }}
 
 #      - name: Official SonarQube Scan test
 #        uses: SonarSource/sonarqube-scan-action@v2.0.1
