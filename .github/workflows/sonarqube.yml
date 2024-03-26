@@ -67,6 +67,6 @@ jobs:
         env:
        #   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: http://127.0.0.1:9000
-          sonar.login: admin
-          sonar.password: admin
+        #  sonar.login: admin
+        #  sonar.password: admin
           sonar.projectKey: sonarqube
