@@ -49,4 +49,3 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
           sonar.login: admin
           sonar.password: admin
-          sonar.projectKey: projet-sonar
