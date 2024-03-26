@@ -11,26 +11,26 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    container:
-        image: mcr.microsoft.com/azure-cli:latest
+#    container:
+#        image: mcr.microsoft.com/azure-cli:latest
     steps:
       # Checks out the repository this file is in
       - uses: actions/checkout@v4
 
       # Logs in with your Azure credentials
-      - name: Azure login
-        uses: Azure/login@v2.0.0
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+#      - name: Azure login
+#        uses: Azure/login@v2.0.0
+#        with:
+#          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+#      - name: conexion au cluster
+#        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
-      - uses: Azure/setup-kubectl@v4.0.0      
-        id: install
+#      - uses: Azure/setup-kubectl@v4.0.0      
+#        id: install
 
-      - name : port-forward
-        run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube --address 0.0.0.0 9000 &
+#      - name : port-forward
+#        run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube --address 0.0.0.0 9000 &
 
 #      - name: Wait for SonarQube to be ready
 #        run: sleep 60
@@ -39,12 +39,12 @@ jobs:
         run: |
           apk add curl
 
-      - name: ping sonarqube
-        run: |
-          ping -c 5 127.0.0.1:9000
+#      - name: ping sonarqube
+#        run: |
+#          ping -c 5 127.0.0.1:9000
 
-      - name : kubectl get svc -n sonarqube
-        run: kubectl get svc -n sonarqube
+#      - name : kubectl get svc -n sonarqube
+#        run: kubectl get svc -n sonarqube
 
       - name: download cli sonarqube et lancer sonarqube
         run: |
