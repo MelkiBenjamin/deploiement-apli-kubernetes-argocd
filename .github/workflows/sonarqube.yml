@@ -46,16 +46,16 @@ jobs:
       - name : kubectl get svc -n sonarqube
         run: kubectl get svc -n sonarqube
 
-      - name: instll wget
-        run: apk add wget
-
-      - name: download cli sonarqube
-        run: | 
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip 
-          unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+      - name: download cli sonarqube et lancer sonarqube
+        run: |
+          curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip --output sonar-scanner-cli-5.0.1.3006-linux.zip
 
       - name: ls
-        run: ls
+        run: ls          
+      - name: unzip cli sonarqube
+        run: unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+
+
         
  #  - name: 
           
