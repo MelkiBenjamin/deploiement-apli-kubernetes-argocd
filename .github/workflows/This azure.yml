@@ -30,7 +30,7 @@
 name: Build and deploy an app to AKS
 
 on:
-  push:
+#  push:
   workflow_dispatch:
 
 #env:
@@ -232,15 +232,19 @@ jobs:
       - name: sonarqube verfication
         run: kubectl get svc -n sonarqube
 
-#      - name: sonarqube token
-#        run: |
-#          curl -u admin:${{ secrets.ARGOCD }} -X POST "http://127.0.0.1:9000/api/user_tokens/generate" -d "name=mon_token"
+      - name: sonarqube token
+        run: |
+          curl -u admin:${{ secrets.ARGOCD }} -X POST "http://127.0.0.1:9000/api/user_tokens/generate" -d "name=mon_token"
 
-#      - name: Official SonarQube Scan test
-#        uses: SonarSource/sonarqube-scan-action@v2.0.1
-#        env:
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#          SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
+      - name: Official SonarQube Scan test
+        uses: SonarSource/sonarqube-scan-action@v2.0.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
+          sonar.login: admin
+          sonar.password: admin
+          sonar.projectKey: projet-sonar
+
 
 #      - name: Deploy ArgoCD
 #        uses: cloudposse/github-action-deploy-argocd@0.8.1

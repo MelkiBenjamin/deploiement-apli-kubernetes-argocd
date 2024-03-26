@@ -1,7 +1,7 @@
 name: sonarqube verification
 
 on:
-#  push:
+  push:
   workflow_dispatch:
 
 jobs:
@@ -47,3 +47,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
+          sonar.login: admin
+          sonar.password: admin
+          sonar.projectKey: projet-sonar
