@@ -30,7 +30,7 @@
 name: Build and deploy an app to AKS
 
 on:
-  push:
+#  push:
   workflow_dispatch:
 
 #env:
@@ -40,32 +40,12 @@ on:
 #  CLUSTER_NAME: "your-cluster-name"
 #  DEPLOYMENT_MANIFEST_PATH: "your-deployment-manifest-path"
 
-
 jobs:
-  buildImage:
-    runs-on: ubuntu-latest
-#    container:
-#      image: mcr.microsoft.com/azure-cli:latest
-    steps:
-      - uses: actions/checkout@v4
-
-#      - name: Official SonarQube Scan test
-#        uses: SonarSource/sonarqube-scan-action@v2.0.1
-#        env:
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#          SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
-
-  deploy:
-    permissions:
-      actions: read
-      contents: read
-      id-token: write
+  createcluster:
     runs-on: ubuntu-latest
     container:
-        image: mcr.microsoft.com/azure-cli:latest
-    needs: [buildImage]
+      image: mcr.microsoft.com/azure-cli:latest
     steps:
-      # Checks out the repository this file is in
       - uses: actions/checkout@v4
 
       # Logs in with your Azure credentials
@@ -119,6 +99,89 @@ jobs:
           admin: 'false'
           use-kubelogin: 'true'
 
+  sonarqube:
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    container:
+        image: mcr.microsoft.com/azure-cli:latest
+    needs: [createcluster]
+    steps:
+      - uses: actions/checkout@v4
+        # Logs in with your Azure credentials
+      - name: Azure login
+        uses: Azure/login@v2.0.0
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: conexion au cluster
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+
+      - uses: Azure/setup-kubectl@v4.0.0      
+        id: install     
+                
+      - name: install helm
+        uses: Azure/setup-helm@v4
+        id: install-helm
+
+      - name: installer sonarqube avec helm
+        run: |
+          helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
+          helm repo update
+          kubectl create namespace sonarqube
+          helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube
+  
+      - name: sonarqube verfication svc
+        run: kubectl get svc -n sonarqube
+  
+#      - name: loadbalancing
+#        run: |
+#          echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
+#          kubectl patch svc sonarqube-sonarqube --type merge --patch "$(cat patch.json)" -n sonarqube
+  
+      - name: sonarqube attendre
+        run: sleep 30
+  
+      - name: sonarqube verfication
+        run: kubectl get svc -n sonarqube
+
+      - name: sonarqube token
+        run: |
+          curl -u admin:${{ secrets.ARGOCD }} -X POST "http://127.0.0.1:9000/api/user_tokens/generate" -d "name=mon_token"
+
+     # - name: Official SonarQube Scan test
+     #   uses: SonarSource/sonarqube-scan-action@v2.0.1
+     #   env:
+     #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+     #     SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
+     #     sonar.login: admin
+     #     sonar.password: admin
+     #     sonar.projectKey: projet-sonar
+
+  deploy-argocd:
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    container:
+        image: mcr.microsoft.com/azure-cli:latest
+    needs: [sonarqube]
+    steps:
+      - uses: actions/checkout@v4
+        # Logs in with your Azure credentials
+      - name: Azure login
+        uses: Azure/login@v2.0.0
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: conexion au cluster
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+
+      - uses: Azure/setup-kubectl@v4.0.0      
+        id: install
       - name: Install cli argocd
         run: |
           apk add curl
@@ -170,11 +233,58 @@ jobs:
           ARGOCD: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
         run: argocd account update-password --account admin --new-password ${{ secrets.ARGOCD }} --current-password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo)
 
+  deploy-app:
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    container:
+        image: mcr.microsoft.com/azure-cli:latest
+    needs: [deploy-argocd]
+    steps:
+      - uses: actions/checkout@v4
+        # Logs in with your Azure credentials
+      - name: Azure login
+        uses: Azure/login@v2.0.0
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: conexion au cluster
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+
+      - uses: Azure/setup-kubectl@v4.0.0      
+        id: install
+
       - name: Create ArgoCD Application
         run: |
           kubectl config set-context --current --namespace=argocd
           argocd app create evershop --repo https://github.com/MelkiBenjamin/test-deploiement-apli-kubenete-argocd --path evershop --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated --auto-prune
-              
+
+  monitoring:
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    container:
+        image: mcr.microsoft.com/azure-cli:latest
+    needs: [deploy-app]
+    steps:
+      - uses: actions/checkout@v4
+        # Logs in with your Azure credentials
+        # Logs in with your Azure credentials
+      - name: Azure login
+        uses: Azure/login@v2.0.0
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: conexion au cluster
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+
+      - uses: Azure/setup-kubectl@v4.0.0      
+        id: install
+
       - name: install helm
         uses: Azure/setup-helm@v4
         id: install-helm
@@ -210,55 +320,6 @@ jobs:
 #        run: |
 #          echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
 #          kubectl patch svc my-kube-prometheus-stack-grafana --type merge --patch "$(cat patch.json)" -n monitoring
-
-      - name: installer sonarqube avec helm
-        run: |
-          helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
-          helm repo update
-          kubectl create namespace sonarqube
-          helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube
-  
-      - name: sonarqube verfication svc
-        run: kubectl get svc -n sonarqube
-  
-#      - name: loadbalancing
-#        run: |
-#          echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
-#          kubectl patch svc sonarqube-sonarqube --type merge --patch "$(cat patch.json)" -n sonarqube
-  
-      - name: sonarqube attendre
-        run: sleep 30
-  
-      - name: sonarqube verfication
-        run: kubectl get svc -n sonarqube
-
-      - name : port-forward
-        run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube --address 0.0.0.0 9000 &
-
-      - name: download cli sonarqube 
-        run: |
-          curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip --output sonar-scanner-cli-5.0.1.3006-linux.zip
-        
-      - name: unzip cli sonarqube
-        run: unzip sonar-scanner-cli-5.0.1.3006-linux.zip
-
-      - name: lance sonarqube
-        run: |
-          sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=sonarqube -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONAR_IP }} -Dsonar.login=${{ secrets.SONAR_LOGIN }} -Dsonar.password=${{ secrets.SONAR_PASSWORD }}
-
-      - name: sonarqube token
-        run: |
-          curl -u admin:${{ secrets.ARGOCD }} -X POST "http://127.0.0.1:9000/api/user_tokens/generate" -d "name=mon_token"
-
-#      - name: Official SonarQube Scan test
-#        uses: SonarSource/sonarqube-scan-action@v2.0.1
-#        env:
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#          SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
-#          sonar.login: admin
-#          sonar.password: admin
-#          sonar.projectKey: projet-sonar
-
 
 #      - name: Deploy ArgoCD
 #        uses: cloudposse/github-action-deploy-argocd@0.8.1
