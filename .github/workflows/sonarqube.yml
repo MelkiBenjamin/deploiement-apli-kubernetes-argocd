@@ -33,7 +33,7 @@ jobs:
         run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube --address 0.0.0.0 9000 &
 
       - name: Wait for SonarQube to be ready
-        run: sleep 10
+        run: sleep 5
 
       - name: curl sonarqube
         run: |
@@ -47,5 +47,5 @@ jobs:
         env:
           #SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
-          sonar.login: admin
-          sonar.password: admin
+#          sonar.login: admin
+#          sonar.password: admin
