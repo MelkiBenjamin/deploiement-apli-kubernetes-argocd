@@ -58,14 +58,15 @@ jobs:
       - name: unzip cli sonarqube
         run: unzip sonar-scanner-cli-5.0.1.3006-linux.zip
 
-      - name: lance sonarqube
-        run: |
-          sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=sonarqube -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONAR_IP }} -Dsonar.login=${{ secrets.SONAR_LOGIN }} -Dsonar.password=${{ secrets.SONAR_PASSWORD }}
+#      - name: lance sonarqube
+#        run: |
+#          sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=sonarqube -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONAR_IP }} -Dsonar.login=${{ secrets.SONAR_LOGIN }} -Dsonar.password=${{ secrets.SONAR_PASSWORD }}
 
-#      - name: Official SonarQube Scan test
-#        uses: SonarSource/sonarqube-scan-action@v2.0.1
-#        env:
-#          #SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#          SONAR_HOST_URL: http://127.0.0.1:9000
-#          sonar.login: admin
-#          sonar.password: admin
+      - name: Official SonarQube Scan test
+        uses: SonarSource/sonarqube-scan-action@v2.0.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: http://127.0.0.1:9000
+          sonar.login: admin
+          sonar.password: admin
+          sonar.projectKey: sonarqube
