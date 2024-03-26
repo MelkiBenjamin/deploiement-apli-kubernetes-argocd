@@ -58,13 +58,13 @@ jobs:
         id: install
 
       - name: creation de groupe
-        run: az group create --name monResourceGroup2 --location francecentral
+        run: az group create --name monResourceGroup3 --location francecentral
 
       - name: creation de cluster aks
 #        env:
 #          test: if az aks list --query "[].{Name:name, Power:powerState.code}" -o table | grep monClusterAKS | awk '{print $2}' | grep -q Running
         run: |
-          az aks create --resource-group monResourceGroup2 --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
+          az aks create --resource-group monResourceGroup3 --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
 #          if [ "$test" = "false" ]; then
 #          fi
 
@@ -72,7 +72,7 @@ jobs:
 #        uses: actions/aks_create_action@v1
 #        with:
 #            CLUSTER_NAME: monCluster
-#            RESOURCE_GROUP_NAME: monResourceGroup2
+#            RESOURCE_GROUP_NAME: monResourceGroup3
 #            STORAGE_ACCOUNT_NAME: monstorageaccount
 #            STORAGE_CONTAINER_NAME: mon storage container
 #            STORAGE_ACCESS_KEY: ******
@@ -82,7 +82,7 @@ jobs:
 #            ARM_TENANT_ID: ********
 
       - name: connexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup2 --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup3 --name monClusterAKS
 
       # Use kubelogin to configure your kubeconfig for Azure auth
       - name: Set up kubelogin for non-interactive login
@@ -94,7 +94,7 @@ jobs:
       - name: Get K8s context
         uses: Azure/aks-set-context@v4.0.0
         with:
-          resource-group: monResourceGroup2
+          resource-group: monResourceGroup3
           cluster-name: monClusterAKS
           admin: 'false'
           use-kubelogin: 'true'
@@ -105,8 +105,8 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    container:
-        image: ubuntu:latest
+#    container:
+#        image: ubuntu:latest
     needs: [createcluster]
     steps:
       - uses: actions/checkout@v4
@@ -121,7 +121,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup2 --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup3 --name monClusterAKS
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install     
@@ -196,7 +196,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup2 --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup3 --name monClusterAKS
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
@@ -269,7 +269,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup2 --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup3 --name monClusterAKS
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
@@ -298,7 +298,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup2 --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup3 --name monClusterAKS
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
