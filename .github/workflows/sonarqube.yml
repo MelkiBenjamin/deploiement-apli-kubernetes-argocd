@@ -32,8 +32,8 @@ jobs:
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
 
-#      - name : port-forward
-#        run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube --address 0.0.0.0 9000 &
+      - name : port-forward
+        run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube --address 0.0.0.0 9000 &
 
 #      - name: Wait for SonarQube to be ready
 #        run: sleep 60
@@ -58,13 +58,9 @@ jobs:
       - name: unzip cli sonarqube
         run: unzip sonar-scanner-cli-5.0.1.3006-linux.zip
 
-
-        
- #  - name: 
-          
       - name: lance sonarqube
         run: |
-          sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=sonarqube -Dsonar.sources=. -Dsonar.host.url=http://
+          sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=sonarqube -Dsonar.sources=. -Dsonar.host.url=http://127.0.0.1:9000
 
 #      - name: Official SonarQube Scan test
 #        uses: SonarSource/sonarqube-scan-action@v2.0.1
