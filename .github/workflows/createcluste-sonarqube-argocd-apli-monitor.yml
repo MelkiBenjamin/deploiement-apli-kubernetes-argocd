@@ -105,8 +105,8 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-#    container:
-#        image: ubuntu:latest
+    container:
+        image: mcr.microsoft.com/azure-cli:latest
     needs: [createcluster]
     steps:
       - uses: actions/checkout@v4
@@ -154,20 +154,20 @@ jobs:
       - name : port-forward
         run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube --address 0.0.0.0 9000 &
 
-      - name: download cli sonarqube 
-        run: |
-          curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip --output sonar-scanner-cli-5.0.1.3006-linux.zip
+#      - name: download cli sonarqube 
+#        run: |
+#          curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip --output sonar-scanner-cli-5.0.1.3006-linux.zip
         
-      - name: unzip cli sonarqube
-        run: unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+#      - name: unzip cli sonarqube
+#        run: unzip sonar-scanner-cli-5.0.1.3006-linux.zip
 
-      - name: sonarqube token
-        run: |
-          curl -u admin:${{ secrets.ARGOCD }} -X POST "http://127.0.0.1:9000/api/user_tokens/generate" -d "name=mon_token"
+#      - name: sonarqube token
+#        run: |
+#          curl -u admin:${{ secrets.ARGOCD }} -X POST "http://127.0.0.1:9000/api/user_tokens/generate" -d "name=mon_token"
 
-      - name: lance sonarqube
-        run: |
-          sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=sonarqube -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONAR_IP }} -Dsonar.login=${{ secrets.SONAR_LOGIN }} -Dsonar.password=${{ secrets.SONAR_PASSWORD }}
+#      - name: lance sonarqube
+#        run: |
+#          sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=sonarqube -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONAR_IP }} -Dsonar.login=${{ secrets.SONAR_LOGIN }} -Dsonar.password=${{ secrets.SONAR_PASSWORD }}
 
      # - name: Official SonarQube Scan test
      #   uses: SonarSource/sonarqube-scan-action@v2.0.1
