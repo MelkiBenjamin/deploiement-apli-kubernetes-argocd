@@ -132,7 +132,7 @@ jobs:
           helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
           helm repo update
           kubectl create namespace sonarqube
-          helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube
+          helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube 
   
       - name: sonarqube verfication svc
         run: kubectl get svc -n sonarqube
@@ -143,7 +143,7 @@ jobs:
 #          kubectl patch svc sonarqube-sonarqube --type merge --patch "$(cat patch.json)" -n sonarqube
   
       - name: sonarqube attendre
-        run: sleep 30
+        run: sleep 60
   
       - name: sonarqube verfication
         run: kubectl get svc -n sonarqube
@@ -270,6 +270,13 @@ jobs:
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
+      
+      - name: Install cli argocd
+        run: |
+          apk add curl
+          curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+          rm argocd-linux-amd64
 
       - name: Create ArgoCD Application
         run: |
@@ -284,7 +291,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
         image: mcr.microsoft.com/azure-cli:latest
-    needs: [deploy-app]
+    needs: [createcluster]
     steps:
       - uses: actions/checkout@v4
         # Logs in with your Azure credentials
