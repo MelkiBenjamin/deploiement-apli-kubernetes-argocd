@@ -35,9 +35,9 @@ jobs:
 #      - name: Wait for SonarQube to be ready
 #        run: sleep 60
 
-      - name: curl sonarqube
-        run: |
-          apk add curl
+#      - name: curl sonarqube
+#        run: |
+#          apk add curl
 
 #      - name: ping sonarqube
 #        run: |
