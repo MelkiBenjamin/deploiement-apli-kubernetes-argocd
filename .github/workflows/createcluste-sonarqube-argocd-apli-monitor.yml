@@ -62,9 +62,9 @@ jobs:
 
       - name: creation de cluster aks
 #        env:
-#          test: if az aks list --query "[].{Name:name, Power:powerState.code}" -o table | grep monClusterAKS | awk '{print $2}' | grep -q Running
+#          test: if az aks list --query "[].{Name:name, Power:powerState.code}" -o table | grep monClusterAKS2 | awk '{print $2}' | grep -q Running
         run: |
-          az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
+          az aks create --resource-group monResourceGroup --name monClusterAKS2 --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
 #          if [ "$test" = "false" ]; then
 #          fi
 
@@ -82,7 +82,7 @@ jobs:
 #            ARM_TENANT_ID: ********
 
       - name: connexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS2
 
       # Use kubelogin to configure your kubeconfig for Azure auth
       - name: Set up kubelogin for non-interactive login
@@ -95,7 +95,7 @@ jobs:
         uses: Azure/aks-set-context@v4.0.0
         with:
           resource-group: monResourceGroup
-          cluster-name: monClusterAKS
+          cluster-name: monClusterAKS2
           admin: 'false'
           use-kubelogin: 'true'
 
@@ -105,11 +105,14 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    container:
-        image: mcr.microsoft.com/azure-cli:latest
+    #container:
+    #    image: mcr.microsoft.com/azure-cli:latest
     needs: [createcluster]
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install azure-cli
+        run: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
         # Logs in with your Azure credentials
       - name: Azure login
@@ -118,7 +121,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS2
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install     
@@ -151,20 +154,20 @@ jobs:
       - name : port-forward
         run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube --address 0.0.0.0 9000 &
 
-#      - name: download cli sonarqube 
-#        run: |
-#          curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip --output sonar-scanner-cli-5.0.1.3006-linux.zip
+      - name: download cli sonarqube 
+        run: |
+          curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip --output sonar-scanner-cli-5.0.1.3006-linux.zip
         
-#      - name: unzip cli sonarqube
-#        run: unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+      - name: unzip cli sonarqube
+        run: unzip sonar-scanner-cli-5.0.1.3006-linux.zip
 
-#      - name: sonarqube token
-#        run: |
-#          curl -u admin:${{ secrets.ARGOCD }} -X POST "http://127.0.0.1:9000/api/user_tokens/generate" -d "name=mon_token"
+      - name: sonarqube token
+        run: |
+          curl -u admin:${{ secrets.ARGOCD }} -X POST "http://127.0.0.1:9000/api/user_tokens/generate" -d "name=mon_token"
 
-#      - name: lance sonarqube
-#        run: |
-#          sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=sonarqube -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONAR_IP }} -Dsonar.login=${{ secrets.SONAR_LOGIN }} -Dsonar.password=${{ secrets.SONAR_PASSWORD }}
+      - name: lance sonarqube
+        run: |
+          sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=sonarqube -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONAR_IP }} -Dsonar.login=${{ secrets.SONAR_LOGIN }} -Dsonar.password=${{ secrets.SONAR_PASSWORD }}
 
      # - name: Official SonarQube Scan test
      #   uses: SonarSource/sonarqube-scan-action@v2.0.1
@@ -193,7 +196,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS2
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
@@ -216,7 +219,7 @@ jobs:
         uses: Azure/aks-set-context@v4.0.0
         with:
           resource-group: monResourceGroup
-          cluster-name: monClusterAKS
+          cluster-name: monClusterAKS2
 
       - name: Deploys application argocd
         uses: Azure/k8s-deploy@v5.0.0
@@ -273,7 +276,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS2
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
@@ -315,7 +318,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS2
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
@@ -328,7 +331,7 @@ jobs:
 #        uses: cloudposse/github-action-deploy-helmfile@main
 #        id: deploy
 #        with:
-#          cluster: monClusterAKS
+#          cluster: monClusterAKS2
 #          environment: evershop
 #          namespace: default
 #          image: evershop
