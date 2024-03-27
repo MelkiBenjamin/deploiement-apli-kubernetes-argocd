@@ -170,17 +170,17 @@ readinessProbe:
   initialDelaySeconds: 180
   periodSeconds: 30
   failureThreshold: 6
-  sonarWebContext: /sonarqube/
+#  sonarWebContext: /sonarqube/
 livenessProbe:
   initialDelaySeconds: 180
   periodSeconds: 30
   failureThreshold: 6
-  sonarWebContext: /sonarqube/
+#  sonarWebContext: /sonarqube/
 startupProbe:
   initialDelaySeconds: 180
   periodSeconds: 10
   failureThreshold: 24
-  sonarWebContext: /sonarqube/
+#  sonarWebContext: /sonarqube/
 
 initContainers:
   # image: busybox:1.36
