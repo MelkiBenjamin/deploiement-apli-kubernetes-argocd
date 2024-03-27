@@ -285,6 +285,10 @@ jobs:
           install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
           rm argocd-linux-amd64
 
+      - name: conexion argocd  
+        run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password ${{ secrets.ARGOCD }} --insecure
+
+
       - name: Create ArgoCD Application
         run: |
           kubectl config set-context --current --namespace=argocd
