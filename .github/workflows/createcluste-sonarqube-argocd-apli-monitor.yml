@@ -62,9 +62,9 @@ jobs:
 
       - name: creation de cluster aks
 #        env:
-#          test: if az aks list --query "[].{Name:name, Power:powerState.code}" -o table | grep monClusterAKS2 | awk '{print $2}' | grep -q Running
+#          test: if az aks list --query "[].{Name:name, Power:powerState.code}" -o table | grep monClusterAKS1112 | awk '{print $2}' | grep -q Running
         run: |
-          az aks create --resource-group monResourceGroup --name monClusterAKS2 --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
+          az aks create --resource-group monResourceGroup --name monClusterAKS1112 --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
 #          if [ "$test" = "false" ]; then
 #          fi
 
@@ -82,7 +82,7 @@ jobs:
 #            ARM_TENANT_ID: ********
 
       - name: connexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS2
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS1112
 
       # Use kubelogin to configure your kubeconfig for Azure auth
       - name: Set up kubelogin for non-interactive login
@@ -95,7 +95,7 @@ jobs:
         uses: Azure/aks-set-context@v4.0.0
         with:
           resource-group: monResourceGroup
-          cluster-name: monClusterAKS2
+          cluster-name: monClusterAKS1112
           admin: 'false'
           use-kubelogin: 'true'
 
@@ -118,7 +118,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS2
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS1112
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install     
@@ -193,7 +193,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS2
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS1112
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
@@ -216,7 +216,7 @@ jobs:
         uses: Azure/aks-set-context@v4.0.0
         with:
           resource-group: monResourceGroup
-          cluster-name: monClusterAKS2
+          cluster-name: monClusterAKS1112
 
       - name: Deploys application argocd
         uses: Azure/k8s-deploy@v5.0.0
@@ -273,7 +273,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS2
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS1112
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
@@ -309,7 +309,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS2
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS1112
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
@@ -322,7 +322,7 @@ jobs:
 #        uses: cloudposse/github-action-deploy-helmfile@main
 #        id: deploy
 #        with:
-#          cluster: monClusterAKS2
+#          cluster: monClusterAKS1112
 #          environment: evershop
 #          namespace: default
 #          image: evershop
