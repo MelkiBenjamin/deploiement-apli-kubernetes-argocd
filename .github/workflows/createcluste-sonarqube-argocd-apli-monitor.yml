@@ -68,7 +68,7 @@ jobs:
 #          if [ "$test" = "false" ]; then
 #          fi
 
-#      - name: creer le cluster aks
+#      - name: creer le cluster aks test
 #        uses: actions/aks_create_action@v1
 #        with:
 #            CLUSTER_NAME: monCluster
