@@ -197,6 +197,7 @@ jobs:
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
+        
       - name: Install cli argocd
         run: |
           apk add curl
@@ -211,14 +212,22 @@ jobs:
       - name: creer namespace argocd
         run: kubectl create namespace argocd
 
+      - name: Get K8s context
+        uses: Azure/aks-set-context@v4.0.0
+        with:
+          resource-group: monResourceGroup
+          cluster-name: monClusterAKS
+          admin: 'false'
+          use-kubelogin: 'true'
+
       - name: Deploys application argocd
         uses: Azure/k8s-deploy@v5.0.0
         with:
           namespace: argocd
           action: deploy
           manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-          images: |
-             quay.io/argoproj/argocd:v2.10.3
+#          images: |
+#             quay.io/argoproj/argocd:v2.10.3
 
       - name: redirection de port
         run: |
