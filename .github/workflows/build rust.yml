@@ -8,7 +8,7 @@ jobs:
   createcluster:
     runs-on: ubuntu-latest
     container:
-      image: rust:slim-buster
+      image: rust:1.71.0
     steps:
       - uses: actions/checkout@v4
 
