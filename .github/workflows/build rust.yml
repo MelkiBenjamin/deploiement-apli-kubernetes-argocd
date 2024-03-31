@@ -1,0 +1,16 @@
+name: Build rust test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  createcluster:
+    runs-on: ubuntu-latest
+    container:
+      image: rust:slim-buster
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: build
+        run: cargo build --release
