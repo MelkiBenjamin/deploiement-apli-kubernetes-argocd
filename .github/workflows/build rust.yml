@@ -13,4 +13,4 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: build
-        run: cargo build --release
+        run: cargo build .\product-service\ --release
