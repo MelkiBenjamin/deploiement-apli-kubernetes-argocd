@@ -13,4 +13,6 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: build
-        run: cargo build .\product-service\ --release
+        run: |
+            cd product-service 
+            cargo build --release
