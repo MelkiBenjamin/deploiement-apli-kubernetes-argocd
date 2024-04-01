@@ -16,6 +16,8 @@ jobs:
         run: |
             cd product-service 
             cargo build --release
+      - name: ls
+        run: ls
 
             
   buildorderservice:
@@ -29,6 +31,8 @@ jobs:
       run: |
         cd order-service
         npm install --production
+    - name: ls
+      run: ls
 
   buildstore-front:
     runs-on: ubuntu-latest
@@ -40,4 +44,7 @@ jobs:
     - name: build
       run: |
         cd store-front
+        npm install
         npm run build
+    - name: ls
+      run: ls
