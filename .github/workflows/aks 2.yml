@@ -26,14 +26,21 @@ jobs:
         
       - name: Install cli argocd
         run: |
-          apt update
-          apt install curl
+          sudo apt update
+          sudo apt install curl
           curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
           install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
           rm argocd-linux-amd64
 
       - name: creer namespace argocd
         run: kubectl create namespace argocd
+
+      - name: Deploys application argocd
+        uses: Azure/k8s-deploy@v5.0.0
+        with:
+          namespace: argocd
+          action: deploy
+          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
       - name: redirection de port
         run: |
