@@ -34,7 +34,7 @@ jobs:
       - name: creer namespace argocd
         run: kubectl create namespace argocd
 
-        - name: redirection de port
+      - name: redirection de port
         run: |
           echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
           kubectl patch svc argocd-server -n argocd --type merge --patch "$(cat patch.json)"
