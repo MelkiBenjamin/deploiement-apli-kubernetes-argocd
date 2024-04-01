@@ -32,8 +32,8 @@ jobs:
           install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
           rm argocd-linux-amd64
 
-      - name: creer namespace argocd
-        run: kubectl create namespace argocd
+#      - name: creer namespace argocd
+#        run: kubectl create namespace argocd
 
       - name: Deploys application argocd
         uses: Azure/k8s-deploy@v5.0.0
