@@ -59,16 +59,12 @@ jobs:
         run: az group create --name monResourceGroup2 --location francecentral
 
       - name: creation de cluster aks
-#        env:
-#          test: if az aks list --query "[].{Name:name, Power:powerState.code}" -o table | grep monClusterAKS | awk '{print $2}' | grep -q Running
         run: |
           az aks create --resource-group monResourceGroup2 --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --location francecentral
-#          if [ "$test" = "false" ]; then
-#          fi
 
-#      - name: creer le cluster aks test
-#        uses: actions/aks_create_action@v1
-#        with:
+#     - name: creer le cluster aks test
+#       uses: actions/aks_create_action@v1
+#       with:
 #            CLUSTER_NAME: monCluster
 #            RESOURCE_GROUP_NAME: monResourceGroup2
 #            STORAGE_ACCOUNT_NAME: monstorageaccount
@@ -79,10 +75,9 @@ jobs:
 #            ARM_SUBSCRIPTION_ID: ********
 #            ARM_TENANT_ID: ********
 
-#      - name: connexion au cluster
-#        run: az aks get-credentials --resource-group monResourceGroup2 --name monClusterAKS
+#     - name: connexion au cluster
+#       run: az aks get-credentials --resource-group monResourceGroup2 --name monClusterAKS
 
-       Use kubelogin to configure your kubeconfig for Azure auth
       - name: Set up kubelogin for non-interactive login
         uses: Azure/use-kubelogin@v1.2
 
