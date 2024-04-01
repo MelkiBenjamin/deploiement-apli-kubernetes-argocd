@@ -25,8 +25,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:    
           tags: |
-            ${{ env.image }}
-          context: ./order-service
+            ${{ env.image2 }}
+          context: ./product-service
           platforms: linux/amd64
           push: true
       
