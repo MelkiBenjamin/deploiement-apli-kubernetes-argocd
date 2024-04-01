@@ -5,10 +5,6 @@ on:
 
 jobs:
   clusterdestoy:
-    permissions:
-      actions: read
-      contents: read
-      id-token: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,8 +14,5 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-#      - name: conexion au cluster
-#        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
-      
       - name: Suppression du cluster
         run: az aks delete --resource-group monResourceGroup --name monClusterAKS --yes --no-wait
