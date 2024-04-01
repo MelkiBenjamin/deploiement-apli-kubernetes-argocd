@@ -1,7 +1,7 @@
 name: Build and deploy an app to AKS suite2
 
 on:
-  push:
+#  push:
   workflow_dispatch:
    
 jobs:
