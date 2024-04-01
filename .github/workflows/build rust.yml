@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  createcluster:
+  buildproductservice:
     runs-on: ubuntu-latest
     container:
       image: rust:1.71.0
@@ -16,3 +16,16 @@ jobs:
         run: |
             cd product-service 
             cargo build --release
+
+            
+  buildorderservice:
+    runs-on: ubuntu-latest
+    container:
+      image: node:18.16.0-alpine
+    steps:
+    - uses: actions/checkout@v4
+              
+    - name: build
+      run: |
+        cd order-service
+        npm install --production
