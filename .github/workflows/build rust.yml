@@ -1,4 +1,4 @@
-name: Build rust test
+name: Build aplication
 
 on:
   push:
@@ -29,3 +29,15 @@ jobs:
       run: |
         cd order-service
         npm install --production
+
+  buildstore-front:
+    runs-on: ubuntu-latest
+    container:
+      image: node:18.16.0-alpine
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: build
+      run: |
+        cd store-front
+        npm run build
