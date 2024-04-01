@@ -25,11 +25,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4  
-    
-    - name: docker build
-      run: |
-        cd order-service
-        docker build -t order-service .
 
     - name: Login to docker Container Registry
       uses: docker/login-action@v3
@@ -42,7 +37,7 @@ jobs:
       with:    
         tags: |
           ${{ env.image }}
-        context: ./product-service
+        context: ./order-service
         platforms: linux/amd64
         push: true
 
