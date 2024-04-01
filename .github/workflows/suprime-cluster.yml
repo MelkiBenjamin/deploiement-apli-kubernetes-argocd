@@ -1,6 +1,6 @@
 name: suprime le cluster azure
 on:
-#  push:
+  push:
   workflow_dispatch:
 
 jobs:
@@ -10,8 +10,6 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    container:
-        image: mcr.microsoft.com/azure-cli:latest
     steps:
       - uses: actions/checkout@v4
         # Logs in with your Azure credentials
@@ -22,9 +20,6 @@ jobs:
 
 #      - name: conexion au cluster
 #        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
-
-#      - uses: Azure/setup-kubectl@v4.0.0      
-#        id: install
       
       - name: Suppression du cluster
         run: az aks delete --resource-group monResourceGroup --name monClusterAKS --yes --no-wait
