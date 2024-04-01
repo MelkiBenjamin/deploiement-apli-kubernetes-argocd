@@ -280,12 +280,8 @@ jobs:
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
       
-      - name: Install cli argocd
-        run: |
-          apk add curl
-          curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
-          rm argocd-linux-amd64
+      - name: Setup ArgoCD CLI 
+        uses: imajeetyadav/argocd-cli@v1
 
       - name: conexion argocd
         env:
