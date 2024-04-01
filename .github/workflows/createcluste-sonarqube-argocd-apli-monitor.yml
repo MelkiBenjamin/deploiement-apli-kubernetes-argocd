@@ -30,7 +30,7 @@
 name: Build and deploy an app to AKS
 
 on:
-#  push:
+  push:
   workflow_dispatch:
 
 #env:
@@ -198,8 +198,8 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+#      - name: conexion au cluster
+#        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
