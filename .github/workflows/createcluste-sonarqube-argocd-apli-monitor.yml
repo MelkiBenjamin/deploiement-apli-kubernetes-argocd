@@ -30,7 +30,7 @@
 name: Build and deploy an app to AKS
 
 on:
-  push:
+#  push:
   workflow_dispatch:
 
 #env:
@@ -81,14 +81,14 @@ jobs:
 #            ARM_SUBSCRIPTION_ID: ********
 #            ARM_TENANT_ID: ********
 
-      - name: connexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+#      - name: connexion au cluster
+#        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
       # Use kubelogin to configure your kubeconfig for Azure auth
-      - name: Set up kubelogin for non-interactive login
-        uses: Azure/use-kubelogin@v1.2
-        with:
-          kubelogin-version: 'v0.0.25'
+#      - name: Set up kubelogin for non-interactive login
+#        uses: Azure/use-kubelogin@v1.2
+#        with:
+#          kubelogin-version: 'v0.0.25'
 
       # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
       - name: Get K8s context
@@ -198,8 +198,8 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-#      - name: conexion au cluster
-#        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+      - name: conexion au cluster
+        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
@@ -314,14 +314,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         # Logs in with your Azure credentials
-        # Logs in with your Azure credentials
       - name: Azure login
         uses: Azure/login@v2.0.0
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: conexion au cluster
-        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
+#      - name: conexion au cluster
+#        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
