@@ -18,7 +18,8 @@ run apt-get install -y pkg-config
 run apt-get install -y libssl-dev
 run apt-get install -y libpq-dev
 run apt-get install -y libcrypto++-dev
-run apt-get install -y linux-musl-dev
+run apt-get install -y musl-tools
+run apt-get install -y musl-dev
 
 
 
