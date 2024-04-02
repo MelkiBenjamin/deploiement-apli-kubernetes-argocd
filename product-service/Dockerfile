@@ -11,11 +11,13 @@ ARG APP_VERSION=0.1.0
 # Copy the source files to the container
 ADD . ./
 
+RUN rustup target add x86_64-unknown-linux-musl
+
 # Build the application
-RUN cargo build --release
+RUN cargo build --target x86_64-unknown-linux-musl --release
 
 # Create a new stage and copy the binary from the builder stage
-FROM ubuntu:22.04 as runner
+FROM alpine as runner
 WORKDIR /app
 
 # Set the build argument for the app version number
