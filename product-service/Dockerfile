@@ -12,6 +12,8 @@ ARG APP_VERSION=0.1.0
 ADD . ./
 
 run rustup target add x86_64-unknown-linux-musl
+run apt-get update && apt-get install -y musl-tools
+
 
 # Build the application
 RUN cargo build --release --target x86_64-unknown-linux-musl
