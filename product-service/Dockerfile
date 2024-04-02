@@ -17,6 +17,8 @@ run apt-get install libssl-dev
 run apt-get install pkg-config
 run apt-get install libssl-dev
 run apt-get install libpq-dev
+run apt-get install libcrypto++-dev
+
 
 
 
