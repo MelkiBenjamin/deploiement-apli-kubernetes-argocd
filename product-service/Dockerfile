@@ -27,7 +27,7 @@ WORKDIR /app
 ARG APP_VERSION=0.1.0
 
 # Not ideal but needed to execute health checks in docker-compose
-#RUN apk add wget
+RUN apk add wget
 
 # Copy the binary from the builder stage
 COPY --from=builder /product-service/target/release/product-service /app
