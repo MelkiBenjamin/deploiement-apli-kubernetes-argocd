@@ -1,0 +1,11 @@
+# Create a new directory for our application
+WORKDIR /product-service
+
+# Set the build argument for the app version number
+ARG APP_VERSION=0.1.0
+
+# Copy the source files to the container
+ADD . ./
+
+# Build the application
+CMD["cargo", "build", "--release"]
