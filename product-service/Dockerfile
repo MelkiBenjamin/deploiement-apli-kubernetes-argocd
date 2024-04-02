@@ -12,10 +12,10 @@ ARG APP_VERSION=0.1.0
 ADD . ./
 
 # Build the application
-RUN cargo build --release
+RUN cargo build --release --target x86_64-unknown-linux-musl
 
 # Create a new stage and copy the binary from the builder stage
-FROM busybox:1.36.1-glibc as runner
+FROM busybox:1.36.1-musl as runner
 WORKDIR /app
 
 # Set the build argument for the app version number
@@ -23,10 +23,6 @@ ARG APP_VERSION=0.1.0
 
 # Not ideal but needed to execute health checks in docker-compose
 #RUN apk add wget
-
-# Copy necessary libraries from an Ubuntu container
-COPY --from=ubuntu:latest /usr/lib/x86_64-linux-gnu/libssl.so.3 /usr/lib/x86_64-linux-gnu/
-COPY --from=ubuntu:latest /usr/lib/x86_64-linux-gnu/libcrypto.so.3 /usr/lib/x86_64-linux-gnu/
 
 # Copy the binary from the builder stage
 COPY --from=builder /product-service/target/release/product-service /app
