@@ -16,7 +16,7 @@ ADD . ./
 RUN cargo build --release
 
 # Create a new stage and copy the binary from the builder stage
-FROM alpinefrolvlad/alpine-glibc:latest as runner
+FROM busybox:1.36.1-glibc as runner
 WORKDIR /app
 
 # Set the build argument for the app version number
