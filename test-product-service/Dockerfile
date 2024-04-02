@@ -15,6 +15,7 @@ RUN apt-get install -y openssl
 RUN apt-get update && apt-get install -y musl-tools
 RUN rustup target add x86_64-unknown-linux-musl
 RUN apt-get install -y musl-dev
+RUN apt-get install -y libssl-dev
 
 # Build the application
 RUN cargo build --target x86_64-unknown-linux-musl --release
