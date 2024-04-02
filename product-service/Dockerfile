@@ -11,13 +11,15 @@ ARG APP_VERSION=0.1.0
 # Copy the source files to the container
 ADD . ./
 
+run rustup target add x86_64-unknown-linux-musl
+run apt-get update && apt-get install -y musl-tools
 
 
 # Build the application
-RUN cargo build --release
+RUN cargo build --release --target x86_64-unknown-linux-musl
 
 # Create a new stage and copy the binary from the builder stage
-FROM frolvlad/alpine-glibc:glibc-2.34 as runner
+FROM busybox:1.36.1-musl as runner
 WORKDIR /app
 
 # Set the build argument for the app version number
