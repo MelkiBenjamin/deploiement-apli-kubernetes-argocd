@@ -30,7 +30,7 @@
 name: Build and deploy an app to AKS
 
 on:
-  push:
+#  push:
   workflow_dispatch:
 
 #env:
@@ -68,7 +68,7 @@ jobs:
 #            CLUSTER_NAME: monCluster
 #            RESOURCE_GROUP_NAME: monResourceGroup2
 #            STORAGE_ACCOUNT_NAME: monstorageaccount
-#            STORAGE_CONTAINER_NAME: mon storage container
+#            STORAGE_CONTlsAINER_NAME: mon storage container
 #            STORAGE_ACCESS_KEY: ******
 #            ARM_CLIENT_ID: ******
 #            ARM_CLIENT_SECRET: ******

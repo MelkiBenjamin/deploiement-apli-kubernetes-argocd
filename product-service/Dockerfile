@@ -1,4 +1,4 @@
-FROM rust:1.71.0 as builder
+FROM rust:1.77 as builder
 
 RUN USER=root cargo new --bin product-service
 
@@ -15,7 +15,7 @@ ADD . ./
 RUN cargo build --release
 
 # Create a new stage and copy the binary from the builder stage
-FROM busybox:1.36.1-glibc as runner
+FROM ubuntu:22.04 as runner
 WORKDIR /app
 
 # Set the build argument for the app version number
