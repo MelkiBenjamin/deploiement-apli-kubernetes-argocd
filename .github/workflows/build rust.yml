@@ -1,13 +1,13 @@
 name: Build aplication
 
 on:
-#  push:
+  push:
   workflow_dispatch:
 
 env:
-    image1: ${{ secrets.DOCKERHUB_USERNAME }}/order-service:latest
-    image2: ${{ secrets.DOCKERHUB_USERNAME }}/product-service:latest
-    image3: ${{ secrets.DOCKERHUB_USERNAME }}/store-front:latest
+    image-order: ${{ secrets.DOCKERHUB_USERNAME }}/order-service:latest
+    image-product: ${{ secrets.DOCKERHUB_USERNAME }}/product-service:latest
+    image-front: ${{ secrets.DOCKERHUB_USERNAME }}/store-front:latest
 
 jobs:
   buildproductservice:
@@ -25,7 +25,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:    
           tags: |
-            ${{ env.image2 }}
+            ${{ env.image-product }}
           context: ./product-service
           platforms: linux/amd64
           push: true
@@ -45,7 +45,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:    
         tags: |
-          ${{ env.image1 }}
+          ${{ env.image-order }}
         context: ./order-service
         platforms: linux/amd64
         push: true
@@ -65,7 +65,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:    
         tags: |
-          ${{ env.image3 }}
+          ${{ env.image-front }}
         context: ./store-front
         platforms: linux/amd64
         push: true
