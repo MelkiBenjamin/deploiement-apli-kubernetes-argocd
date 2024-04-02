@@ -25,4 +25,4 @@ anyhow = "1.0.72"
 wasmtime = { git = "https://github.com/bytecodealliance/wasmtime", branch = "release-15.0.0", features = ["component-model"] }
 wasmtime-wasi = { git = "https://github.com/bytecodealliance/wasmtime", branch = "release-15.0.0" }
 ctor = "0.1.21"
-libssl = "3.29.0"
+openssl-sys = "0.9.102"
