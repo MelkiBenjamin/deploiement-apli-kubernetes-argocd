@@ -16,7 +16,6 @@ RUN apt-get install -y musl-dev
 RUN apt-get install -y libssl-dev
 RUN ENV OPENSSL_DIR=/usr/include/openssl
 RUN apt-get install -y pkg-config
-RUN apt-get install -y libssl-dev
 
 RUN rustup target add x86_64-unknown-linux-musl
 # Build the application
