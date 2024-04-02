@@ -13,6 +13,11 @@ ADD . ./
 
 run rustup target add x86_64-unknown-linux-musl
 run apt-get update && apt-get install -y musl-tools
+run apt-get install libssl-dev
+run apt-get install pkg-config
+run apt-get install libssl-dev
+run apt-get install libpq-dev
+
 
 
 # Build the application
