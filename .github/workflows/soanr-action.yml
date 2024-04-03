@@ -1,0 +1,47 @@
+name: test sonarqube action
+on:
+#  push:
+  workflow_dispatch:
+
+jobs:
+  sonar-action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        
+        # Logs in with your Azure credentials
+      - name: Azure login
+        uses: Azure/login@v2.0.0
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get K8s context
+        uses: Azure/aks-set-context@v4.0.0
+        with:
+          resource-group: monResourceGroup2
+          cluster-name: monClusterAKS
+
+      - uses: Azure/setup-kubectl@v4.0.0      
+        id: install
+
+      - name: kubectl get pod
+        run: kubectl get pod -n sonarqube
+
+      - name: sonarqube verfication svc
+        run: kubectl get svc -n sonarqube
+
+      - name: sonarqube connexion
+        run: kubectl port-forward svc/sonarqube-sonarqube -n sonarqube --address 0.0.0.0 9000 &
+
+      - name: sonarqube token
+        run: |
+          curl -u admin:${{ secrets.ARGOCD }} -X POST "http://127.0.0.1:9000/api/user_tokens/generate" -d "name=mon_token2"
+
+      - name: Official SonarQube Scan test
+        uses: SonarSource/sonarqube-scan-action@v2.0.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
+          sonar.login: admin
+          sonar.password: admin
+          sonar.projectKey: projet-sonar

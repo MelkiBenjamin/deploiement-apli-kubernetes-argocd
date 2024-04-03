@@ -15,7 +15,7 @@ ADD . ./
 RUN cargo build --release 
 
 # Create a new stage and copy the binary from the builder stage
-FROM busybox:1.36.1-glibc as runner
+FROM ubuntu:22.04 as runner
 WORKDIR /app
 
 # Set the build argument for the app version number
