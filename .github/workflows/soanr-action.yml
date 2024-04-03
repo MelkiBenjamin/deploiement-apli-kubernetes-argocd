@@ -44,7 +44,6 @@ jobs:
           SONAR_PROJECT_KEY: "monProjectKey"
           SONAR_PROJECT_NAME: "monProjectName"
           SONAR_SOURCES: "."
-          SONAR_LANGUAGE: "java"
           SONAR_SOURCE_ENCODING: "UTF-8"
           SONAR_PROJECT_VERSION: "1.0"
           SONAR_LOGIN: admin
