@@ -40,7 +40,6 @@ jobs:
       - name: Official SonarQube Scan test
         uses: SonarSource/sonarqube-scan-action@v2.0.1
         env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
+          SONAR_HOST_URL: 127.0.0.1:9000
           sonar.login: ${{ secrets.SONAR_LOGIN }}
           sonar.password: ${{ secrets.SONAR_PASSWORD }}
-          sonar.projectKey: projet-sonar
