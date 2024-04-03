@@ -42,6 +42,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_IP }}
-          sonar.login: admin
-          sonar.password: admin
+          sonar.login: ${{ secrets.SONAR_LOGIN }}
+          sonar.password: ${{ secrets.SONAR_PASSWORD }}
           sonar.projectKey: projet-sonar
