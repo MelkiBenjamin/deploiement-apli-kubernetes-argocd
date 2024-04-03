@@ -41,5 +41,4 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v2.0.1
         env:
           SONAR_HOST_URL: 127.0.0.1:9000
-          sonar.login: ${{ secrets.SONAR_LOGIN }}
-          sonar.password: ${{ secrets.SONAR_PASSWORD }}
+          SONAR_TOKEN: mon_token2
