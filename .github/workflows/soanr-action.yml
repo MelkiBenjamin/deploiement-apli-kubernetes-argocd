@@ -49,3 +49,4 @@ jobs:
           SONAR_PROJECT_VERSION: "1.0"
           SONAR_LOGIN: admin
           SONAR_PASSWORD: admin
+          SONAR_TOKEN: mon_token2
