@@ -180,7 +180,7 @@ jobs:
     runs-on: ubuntu-latest
 #    container:
 #        image: mcr.microsoft.com/azure-cli:latest
-    needs: [createcluster]
+    needs: [sonarqube]
     steps:
       - uses: actions/checkout@v4
         # Logs in with your Azure credentials

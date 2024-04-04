@@ -1,6 +1,6 @@
 name: test sonarqube action
 on:
-  push:
+#  push:
   workflow_dispatch:
 
 jobs:
