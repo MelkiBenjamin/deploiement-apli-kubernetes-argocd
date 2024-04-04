@@ -30,7 +30,7 @@
 name: Build and deploy an app to AKS
 
 on:
-  push:
+#  push:
   workflow_dispatch:
 
 #env:
@@ -118,12 +118,24 @@ jobs:
         uses: Azure/setup-helm@v4
         id: install-helm
 
+      - name: installer openssl
+        run: sudo apt install openssl
+
+      - name: generer certificat
+        run: | 
+          openssl req -x509 -out localhost.crt -keyout localhost.key \
+          -newkey rsa:2048 -nodes -sha256 \
+          -subj '/CN=localhost' -extensions EXT -config <( \
+          printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+
       - name: installer sonarqube avec helm
         run: |
           helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
           helm repo update
           kubectl create namespace sonarqube
-          helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube -f values-sonarqube.yaml
+          helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube -f values-sonarqube.yaml -f 
+          kubectl create secret generic sonarqube-tls --from-file=./localhost.crt --from-file=./localhost.key
+
   
       - name: sonarqube verfication svc
         run: kubectl get svc -n sonarqube
