@@ -216,7 +216,7 @@ extraContainers: []
 ## The cacerts file will be set via SONARQUBE_WEB_JVM_OPTS and SONAR_CE_JAVAOPTS
 ##
 caCerts:
-  enabled: true
+  enabled: false
   image: adoptopenjdk/openjdk11:alpine
   secret: sonarqube-tls
 
