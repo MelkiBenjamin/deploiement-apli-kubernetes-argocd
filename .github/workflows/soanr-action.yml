@@ -35,17 +35,11 @@ jobs:
 
       - name: sonarqube token
         run: |
-          curl -u admin:${{ secrets.ARGOCD }} -X POST "http://127.0.0.1:9000/api/user_tokens/generate" -d "name=mon_token2"
+          curl -u admin:${{ secrets.ARGOCD }} -X POST "http://127.0.0.1:9000/api/user_tokens/generate" -d "name=mon_token10"
 
-      - name: Official SonarQube Scan test
-        uses: SonarSource/sonarqube-scan-action@v2.0.1
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
         env:
-          SONAR_HOST_URL: 127.0.0.1:9000
-          SONAR_PROJECT_KEY: "monProjectKey"
-          SONAR_PROJECT_NAME: "monProjectName"
-          SONAR_SOURCES: "."
-          SONAR_SOURCE_ENCODING: "UTF-8"
-          SONAR_PROJECT_VERSION: "1.0"
-          SONAR_LOGIN: admin
-          SONAR_PASSWORD: admin
-          SONAR_TOKEN: mon_token2
+          SONAR_TOKEN: token10
+          SONAR_HOST_URL: "http://127.0.0.1:9000"
+     
