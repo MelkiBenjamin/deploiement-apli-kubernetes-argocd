@@ -134,7 +134,7 @@ jobs:
           helm repo update
           kubectl create namespace sonarqube
           helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube -f values-sonarqube.yaml 
-          kubectl create secret generic sonarqube-tls --from-file=./localhost.crt --from-file=./localhost.key
+          kubectl create secret generic sonarqube-tls --from-file=./localhost.crt --from-file=./localhost.key -n sonarqube
 
       - name: sonarqube verfication svc
         run: kubectl get svc -n sonarqube
