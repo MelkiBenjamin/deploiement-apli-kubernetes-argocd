@@ -18,7 +18,7 @@ jobs:
       - name: Get K8s context
         uses: Azure/aks-set-context@v4.0.0
         with:
-          resource-group: monResourceGroup2
+          resource-group: monResourceGroup
           cluster-name: monClusterAKS
 
       - uses: Azure/setup-kubectl@v4.0.0      
