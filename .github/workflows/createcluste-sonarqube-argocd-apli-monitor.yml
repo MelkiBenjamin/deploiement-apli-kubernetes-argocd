@@ -56,17 +56,17 @@ jobs:
         id: install
 
       - name: creation de groupe
-        run: az group create --name monResourceGroup22 --location francecentral
+        run: az group create --name monResourceGroup --location francecentral
 
       - name: creation de cluster aks
         run: |
-          az aks create --resource-group monResourceGroup22 --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --vm-set-type VirtualMachineScaleSets --load-balancer-sku standard --enable-cluster-autoscaler --min-count 1 --max-count 3 --location francecentral
+          az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --vm-set-type VirtualMachineScaleSets --load-balancer-sku standard --enable-cluster-autoscaler --min-count 1 --max-count 3 --location francecentral
 
 #     - name: creer le cluster aks test
 #       uses: actions/aks_create_action@v1
 #       with:
 #            CLUSTER_NAME: monCluster
-#            RESOURCE_GROUP_NAME: monResourceGroup22
+#            RESOURCE_GROUP_NAME: monResourceGroup
 #            STORAGE_ACCOUNT_NAME: monstorageaccount
 #            STORAGE_CONTlsAINER_NAME: mon storage container
 #            STORAGE_ACCESS_KEY: ******
@@ -76,7 +76,7 @@ jobs:
 #            ARM_TENANT_ID: ********
 
 #     - name: connexion au cluster
-#       run: az aks get-credentials --resource-group monResourceGroup22 --name monClusterAKS
+#       run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
 #      - name: Set up kubelogin for non-interactive login
 #        uses: Azure/use-kubelogin@v1.2
@@ -85,7 +85,7 @@ jobs:
 #      - name: Get K8s context
 #        uses: Azure/aks-set-context@v4.0.0
 #        with:
-#          resource-group: monResourceGroup22
+#          resource-group: monResourceGroup
 #          cluster-name: monClusterAKS
 #          admin: 'false'
 #          use-kubelogin: 'true'
@@ -105,11 +105,11 @@ jobs:
       - name: Get K8s context
         uses: Azure/aks-set-context@v4.0.0
         with:
-          resource-group: monResourceGroup22
+          resource-group: monResourceGroup
           cluster-name: monClusterAKS
 
 #      - name: conexion au cluster
-#        run: az aks get-credentials --resource-group monResourceGroup22 --name monClusterAKS
+#        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
@@ -198,12 +198,12 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
 #      - name: conexion au cluster
-#        run: az aks get-credentials --resource-group monResourceGroup22 --name monClusterAKS
+#        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
       - name: Get K8s context
         uses: Azure/aks-set-context@v4.0.0
         with:
-          resource-group: monResourceGroup22
+          resource-group: monResourceGroup
           cluster-name: monClusterAKS
 
       - uses: Azure/setup-kubectl@v4.0.0      
@@ -275,12 +275,12 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
 #      - name: conexion au cluster
-#        run: az aks get-credentials --resource-group monResourceGroup22 --name monClusterAKS
+#        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
       - name: Get K8s context
         uses: Azure/aks-set-context@v4.0.0
         with:
-          resource-group: monResourceGroup22
+          resource-group: monResourceGroup
           cluster-name: monClusterAKS
 
       - uses: Azure/setup-kubectl@v4.0.0      
@@ -318,11 +318,11 @@ jobs:
       - name: Get K8s context
         uses: Azure/aks-set-context@v4.0.0
         with:
-          resource-group: monResourceGroup22
+          resource-group: monResourceGroup
           cluster-name: monClusterAKS
 
 #      - name: conexion au cluster
-#        run: az aks get-credentials --resource-group monResourceGroup22 --name monClusterAKS
+#        run: az aks get-credentials --resource-group monResourceGroup --name monClusterAKS
 
       - uses: Azure/setup-kubectl@v4.0.0      
         id: install
