@@ -173,12 +173,12 @@ jobs:
         run: |
           sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=sonarqube -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONAR_IP }} -Dsonar.login=${{ secrets.SONAR_LOGIN }} -Dsonar.password=${{ secrets.SONAR_PASSWORD }} -X
 
-      - name: Official SonarQube Scan test
-        uses: SonarSource/sonarcloud-github-action@master 
-        env:
-          SONAR_TOKEN: ${{ secrets.T }}
-          sonar.projectKey: MelkiBenjamin_deploiement-apli-kubernetes-argocd
-          sonar.organization: melkibenjamin
+#      - name: Official SonarQube Scan test
+#        uses: SonarSource/sonarcloud-github-action@master 
+#        env:
+#          SONAR_TOKEN: ${{ secrets.T }}
+#          sonar.projectKey: MelkiBenjamin_deploiement-apli-kubernetes-argocd
+#          sonar.organization: melkibenjamin
 
   deploy-argocd:
     permissions:
