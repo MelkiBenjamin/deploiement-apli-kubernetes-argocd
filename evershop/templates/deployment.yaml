@@ -198,7 +198,7 @@ spec:
       - name: store-front
         image: benjaminmelki/store-front:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 443
           name: store-front
         env:
         - name: VUE_APP_ORDER_SERVICE_URL
@@ -212,6 +212,12 @@ spec:
           limits:
             cpu: 1000m
             memory: 512Mi
+         # volume pour configurer HTTPS avec un secret TLS:
+      volumes:
+      - name: tls-certs
+        secret:
+          secretName: tls-certs
+
 ---
 apiVersion: v1
 kind: Service
