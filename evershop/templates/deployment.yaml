@@ -212,12 +212,6 @@ spec:
           limits:
             cpu: 1000m
             memory: 512Mi
-         # volume pour configurer HTTPS avec un secret TLS:
-      volumes:
-      - name: tls-certs
-        secret:
-          secretName: tls-certs
-
 ---
 apiVersion: v1
 kind: Service
@@ -225,8 +219,11 @@ metadata:
   name: store-front
 spec:
   ports:
-  - port: 80
-    targetPort: 8080
+  - port: 443
+    protocol: TCP
+    targetPort: 443
   selector:
     app: store-front
   type: LoadBalancer
+  tls:
+    secretName: tls-certs
