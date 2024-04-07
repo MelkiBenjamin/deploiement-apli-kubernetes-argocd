@@ -198,7 +198,7 @@ spec:
       - name: store-front
         image: benjaminmelki/store-front:latest
         ports:
-        - containerPort: 443
+        - containerPort: 8080
           name: store-front
         env:
         - name: VUE_APP_ORDER_SERVICE_URL
@@ -220,10 +220,10 @@ metadata:
 spec:
   ports:
   - port: 443
-    protocol: TCP
     targetPort: 443
+    protocol: TCP
   selector:
     app: store-front
   type: LoadBalancer
   tls:
-    secretName: tls-certs
+  - secretName: tls-secret
