@@ -52,9 +52,6 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: Azure/setup-kubectl@v4.0.0      
-        id: install
-
       - name: creation de groupe
         run: az group create --name monResourceGroup --location francecentral
 
@@ -68,7 +65,7 @@ jobs:
 #            CLUSTER_NAME: monCluster
 #            RESOURCE_GROUP_NAME: monResourceGroup
 #            STORAGE_ACCOUNT_NAME: monstorageaccount
-#            STORAGE_CONTlsAINER_NAME: mon storage container
+#            STORAGE_CONTAINER_NAME: mon storage container
 #            STORAGE_ACCESS_KEY: ******
 #            ARM_CLIENT_ID: ******
 #            ARM_CLIENT_SECRET: ******
@@ -123,7 +120,7 @@ jobs:
 
       - name: generer certificat
         run: | 
-          openssl req -x509 -out localhost.crt -keyout localhost.key \
+          openssl req -x509 -out tls.crt -keyout tls.key \
           -newkey rsa:2048 -nodes -sha256 \
           -subj '/CN=localhost' -extensions EXT -config <( \
           printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
@@ -133,7 +130,7 @@ jobs:
           helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
           helm repo update
           kubectl create namespace sonarqube
-          helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube -f values-sonarqube.yaml
+          helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube 
 
       - name: sonarqube verfication svc
         run: kubectl get pod -n sonarqube
@@ -222,12 +219,12 @@ jobs:
       - name: creer namespace argocd
         run: kubectl create namespace argocd
 
-      - name: Deploys application argocd
+      - name: Deploys application argocd ha
         uses: Azure/k8s-deploy@v5.0.0
         with:
           namespace: argocd
           action: deploy
-          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/ha/install.yaml
 #          images: |
 #             quay.io/argoproj/argocd:v2.10.3
 
