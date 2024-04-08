@@ -219,11 +219,8 @@ metadata:
   name: store-front
 spec:
   ports:
-  - protocol: TCP
-    port: 443
-    targetPort: 443 
+  - port: 80
+    targetPort: 8080
   selector:
     app: store-front
   type: LoadBalancer
-  tls:
-  - secretName: tls-secret
