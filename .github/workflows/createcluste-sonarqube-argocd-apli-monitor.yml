@@ -57,7 +57,7 @@ jobs:
 
       - name: creation de cluster aks
         run: |
-          az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 2 --generate-ssh-keys  --location francecentral
+          az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 3 --generate-ssh-keys  --location francecentral
 
 #     - name: creer le cluster aks test
 #       uses: actions/aks_create_action@v1
@@ -224,7 +224,7 @@ jobs:
         with:
           namespace: argocd
           action: deploy
-          manifests: argocd/install-argocd-ha.yml
+          manifests: argocd/argocd-ha.yml
 #          images: |
 #             quay.io/argoproj/argocd:v2.10.3
 
