@@ -57,7 +57,7 @@ jobs:
 
       - name: creation de cluster aks
         run: |
-          az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 1 --generate-ssh-keys --vm-set-type VirtualMachineScaleSets --load-balancer-sku standard --enable-cluster-autoscaler --min-count 1 --max-count 3 --location francecentral
+          az aks create --resource-group monResourceGroup --name monClusterAKS --enable-managed-identity --node-count 3 --generate-ssh-keys  --location francecentral
 
 #     - name: creer le cluster aks test
 #       uses: actions/aks_create_action@v1
@@ -219,20 +219,12 @@ jobs:
       - name: creer namespace argocd
         run: kubectl create namespace argocd
 
-      - name: install argocd avec helm
-        run: |
-          helm repo add argo https://argoproj.github.io/argo-helm -n argocd
-          helm repo update
-          helm install my-argo-cd argo/argo-cd --version 6.7.10 -n argocd -f argocd/values-argo-cd.yaml
-
-
-
-#      - name: Deploys application argocd
-#        uses: Azure/k8s-deploy@v5.0.0
-#        with:
-#          namespace: argocd
-#          action: deploy
-#          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      - name: Deploys application argocd
+        uses: Azure/k8s-deploy@v5.0.0
+        with:
+          namespace: argocd
+          action: deploy
+          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/ha/install.yaml
 #          images: |
 #             quay.io/argoproj/argocd:v2.10.3
 
