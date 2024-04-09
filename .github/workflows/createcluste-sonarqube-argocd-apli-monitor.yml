@@ -130,7 +130,7 @@ jobs:
           helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
           helm repo update
           kubectl create namespace sonarqube
-          helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube 
+          helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube -f values-sonarqube.yaml
 
       - name: sonarqube verfication svc
         run: kubectl get pod -n sonarqube
@@ -219,12 +219,20 @@ jobs:
       - name: creer namespace argocd
         run: kubectl create namespace argocd
 
-      - name: Deploys application argocd ha
-        uses: Azure/k8s-deploy@v5.0.0
-        with:
-          namespace: argocd
-          action: deploy
-          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/ha/install.yaml
+      - name: install argocd avec helm
+        run: |
+          helm repo add argo https://argoproj.github.io/argo-helm -n argocd
+          helm repo update
+          helm install my-argo-cd argo/argo-cd --version 6.7.10 -n argocd -f argocd/values-argo-cd.yaml
+
+
+
+#      - name: Deploys application argocd
+#        uses: Azure/k8s-deploy@v5.0.0
+#        with:
+#          namespace: argocd
+#          action: deploy
+#          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 #          images: |
 #             quay.io/argoproj/argocd:v2.10.3
 
