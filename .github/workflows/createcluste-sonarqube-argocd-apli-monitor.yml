@@ -224,7 +224,7 @@ jobs:
         with:
           namespace: argocd
           action: deploy
-          manifests: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/ha/install.yaml
+          manifests: argocd/install-argocd-ha.yml
 #          images: |
 #             quay.io/argoproj/argocd:v2.10.3
 
