@@ -244,7 +244,7 @@ jobs:
       - name: Create ArgoCD Application
         run: |
           kubectl config set-context --current --namespace=argocd
-          argocd app create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecomerce --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated --auto-prune
+          argocd app create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated --auto-prune
 
   monitoring:
     permissions:
