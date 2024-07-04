@@ -1,2 +1,0 @@
-Fom alpine:latest
-apk add azure-cli 
