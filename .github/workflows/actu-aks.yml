@@ -267,7 +267,7 @@ jobs:
 
   contoso:
     runs-on: ubuntu-latest
-    needs: [argocd, buildproductservice, buildorderservice, buildstore-front]
+    needs: [argocd, monitoring]
     steps:
       - name: checkout  
         uses: actions/checkout@v4
