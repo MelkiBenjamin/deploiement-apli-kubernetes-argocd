@@ -198,7 +198,7 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    needs: [createcluster]
+    needs: [createcluster, buildproductservice, buildorderservice, buildstore-front]
     steps:
       - name: checkout  
         uses: actions/checkout@v4
@@ -267,7 +267,7 @@ jobs:
 
   contoso:
     runs-on: ubuntu-latest
-    needs: [argocd, monitoring]
+    needs: [argocd, buildproductservice]
     steps:
       - name: checkout  
         uses: actions/checkout@v4
