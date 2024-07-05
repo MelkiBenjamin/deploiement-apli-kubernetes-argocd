@@ -116,7 +116,7 @@ jobs:
   sonarcloud:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout 1  
+      - name: checkout   
         uses: actions/checkout@v4
 
       - name: Analyze with SonarCloud
