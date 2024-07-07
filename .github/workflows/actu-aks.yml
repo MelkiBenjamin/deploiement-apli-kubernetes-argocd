@@ -19,11 +19,11 @@ permissions:
 
 jobs:
   build3microsercice:
-    runs-on: ubuntu-latest
     strategy:
         matrix:
             tag: [${{ env.image-product }}, ${{ env.image-order }}, ${{ env.image-front }}]
             context: [./product-service, ./order-service, ./store-front]
+    runs-on: ubuntu-latest
     steps:
       - name: checkout  
         uses: actions/checkout@v4
