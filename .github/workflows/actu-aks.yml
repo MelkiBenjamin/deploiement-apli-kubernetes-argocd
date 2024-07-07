@@ -22,8 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        tag: [${{ env.image-product }}, ${{ env.image-order }}, ${{ env.image-front }}]
-        context: [./product-service, ./order-service, ./store-front]
+       - tag: [${{ env.image-product }}, ${{ env.image-order }}, ${{ env.image-front }}]
+       - context: [./product-service, ./order-service, ./store-front]
     steps:
       - name: checkout  
         uses: actions/checkout@v4
