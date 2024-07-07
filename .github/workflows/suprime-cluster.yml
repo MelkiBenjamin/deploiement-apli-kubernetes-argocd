@@ -1,6 +1,6 @@
 name: suprime le cluster azure
 on:
-#  push:
+  push:
   workflow_dispatch:
 
 env:
@@ -11,8 +11,6 @@ jobs:
   clusterdestoy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        # Logs in with your Azure credentials
       - name: Azure login
         uses: Azure/login@v2.0.0
         with:
