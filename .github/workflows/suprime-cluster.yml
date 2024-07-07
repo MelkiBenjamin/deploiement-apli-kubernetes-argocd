@@ -3,6 +3,10 @@ on:
 #  push:
   workflow_dispatch:
 
+env:
+  nomcluster: nomcluster
+  nom-grouperessource: grouperessource
+
 jobs:
   clusterdestoy:
     runs-on: ubuntu-latest
@@ -15,4 +19,4 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Suppression du cluster
-        run: az aks delete --resource-group monResourceGroup --name monClusterAKS --yes --no-wait
+        run: az aks delete --resource-group ${{ env.nom-grouperessource }} --name ${{ env.nomcluster }} --yes --no-wait

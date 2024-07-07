@@ -95,7 +95,7 @@ jobs:
 
       - name: creation cluster aks
         run: |
-          az aks create --resource-group ${{ env.nom-grouperessource }} --name ${{ env.nomcluster }} --enable-managed-identity --node-count 1 --generate-ssh-keys --enable-cluster-autoscaler --min-count 1 --max-count 2 --location ${{ env.location }} ${{ env.sensible-pas-afficher }} 
+          az aks create --resource-group ${{ env.nom-grouperessource }} --name ${{ env.nomcluster }} --enable-managed-identity --node-count 1 --generate-ssh-keys --enable-cluster-autoscaler --min-count 1 --max-count 2 --location ${{ env.location }} ${{ env.sensible-pas-afficher }} --node-vm-size Standard_B1s
 
 #     - name: creer le cluster aks test
 #       uses: actions/aks_create_action@v1
@@ -145,9 +145,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [createcluster, buildproductservice, buildorderservice, buildstore-front,sonarcloud]
     steps:
-      - name: checkout  
-        uses: actions/checkout@v4
-
         # Logs in with your Azure credentials
       - name: Azure login
         uses: Azure/login@v2.0.0
@@ -244,12 +241,6 @@ jobs:
       
       - name: argocd attendre
         run: sleep 60
-
-      - name: argocd verfication
-        run: kubectl get svc -n argocd
-    
-      - name: kubectl get pods
-        run: kubectl get pods -n argocd
              
       - name: connexion argocd
         env:
@@ -266,8 +257,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [argocd]
     steps:
-      - name: checkout  
-        uses: actions/checkout@v4
         # Logs in with your Azure credentials
       - name: Azure login
         uses: Azure/login@v2.0.0
@@ -298,8 +287,9 @@ jobs:
 
       - name: Create Application Contoso with Argocd
         run: |
+          kubectl create namespace contoso
           kubectl config set-context --current --namespace=argocd
-          argocd app create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace argocd --sync-policy automated --auto-prune
+          argocd app create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune
 
 #      - name: Deploy
 #        uses: cloudposse/github-action-deploy-argocd@main
