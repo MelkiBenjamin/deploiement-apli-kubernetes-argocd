@@ -21,7 +21,10 @@ jobs:
   build3microsercice:
     strategy:
         matrix:
-            tag: [${{ env.image-product }}, ${{ env.image-order }}, ${{ env.image-front }}]
+            tag: 
+               - ${ env.image-product } 
+               - ${ env.image-order } 
+               - ${ env.image-front }]
             context: [./product-service, ./order-service, ./store-front]
     runs-on: ubuntu-latest
     steps:
@@ -105,7 +108,7 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    needs: [createcluster, buildproductservice, buildorderservice, buildstore-front,sonarcloud]
+    needs: [createcluster, build3microsercice, sonarcloud]
     steps:
         # Logs in with your Azure credentials
       - name: Azure login
@@ -154,7 +157,7 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    needs: [createcluster, buildproductservice, buildorderservice, buildstore-front,sonarcloud]
+    needs: [createcluster, build3microsercice, sonarcloud]
     steps:
       - name: checkout  
         uses: actions/checkout@v4
