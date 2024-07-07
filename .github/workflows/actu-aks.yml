@@ -91,7 +91,6 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: create groupe Azure
-        if: kubectl 
         run: az group create --name ${{ env.nom-grouperessource }} --location ${{ env.location }} ${{ env.sensible-pas-afficher }}
 
       - name: creation cluster aks
