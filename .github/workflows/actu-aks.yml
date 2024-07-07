@@ -267,7 +267,7 @@ jobs:
 
   contoso:
     runs-on: ubuntu-latest
-    needs: [argocd]
+    needs: [[createcluster, buildproductservice, buildorderservice, buildstore-front,sonarcloud]]
     steps:
       - name: checkout  
         uses: actions/checkout@v4
