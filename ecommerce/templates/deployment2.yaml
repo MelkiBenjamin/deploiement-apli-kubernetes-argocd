@@ -105,12 +105,12 @@ spec:
         - name: ORDER_QUEUE_USERNAME
           valueFrom:
             secretKeyRef:
-              name: secrets_orderqueue
+              name: secrets-orderqueue
               key: ORDER_QUEUE_USERNAME
         - name: ORDER_QUEUE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: secrets_orderqueue
+              name: secrets-orderqueue
               key: ORDER_QUEUE_PASSWORD
         - name: ORDER_QUEUE_NAME
           value: "orders"
