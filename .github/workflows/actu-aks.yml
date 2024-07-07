@@ -1,7 +1,7 @@
 name: Build and deploy an app to AKS
 
 on:
-  push:
+#  push:
   workflow_dispatch:
 
 env:
@@ -18,14 +18,7 @@ permissions:
   pull-requests: read
 
 jobs:
-  build3microsercice:
-    strategy:
-        matrix:
-            tag: 
-               - ${ env.image-product } 
-               - ${ env.image-order } 
-               - ${ env.image-front }]
-            context: [./product-service, ./order-service, ./store-front]
+  buildproductservice:
     runs-on: ubuntu-latest
     steps:
       - name: checkout  
@@ -41,11 +34,53 @@ jobs:
         uses: docker/build-push-action@v5
         with:    
           tags: |
-            ${{ matrix.tag }}
-          context: ${{ matrix.context }}
+            ${{ env.image-product }}
+          context: ./product-service
           platforms: ${{ env.platforms }}
           push: true
       
+  buildorderservice:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout  
+      uses: actions/checkout@v4  
+
+    - name: Login to docker Container Registry
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push test
+      uses: docker/build-push-action@v5
+      with:    
+        tags: |
+          ${{ env.image-order }}
+        context: ./order-service
+        platforms: ${{ env.platforms }}
+        push: true
+
+  buildstore-front:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout  
+      uses: actions/checkout@v4
+
+    - name: Login to docker Container Registry
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push test
+      uses: docker/build-push-action@v5
+      with:    
+        tags: |
+          ${{ env.image-front }}
+        context: ./store-front
+        platforms: ${{ env.platforms }}
+        push: true
+  
   createcluster:
     runs-on: ubuntu-latest
     steps:
@@ -108,7 +143,7 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    needs: [createcluster, build3microsercice, sonarcloud]
+    needs: [createcluster, buildproductservice, buildorderservice, buildstore-front,sonarcloud]
     steps:
         # Logs in with your Azure credentials
       - name: Azure login
@@ -157,7 +192,7 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    needs: [createcluster, build3microsercice, sonarcloud]
+    needs: [createcluster, buildproductservice, buildorderservice, buildstore-front,sonarcloud]
     steps:
       - name: checkout  
         uses: actions/checkout@v4
