@@ -18,8 +18,12 @@ permissions:
   pull-requests: read
 
 jobs:
-  buildproductservice:
+  build3microsercice:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tag: [${{ env.image-product }}, ${{ env.image-order }}, ${{ env.image-front }}]
+        context: [./product-service, ./order-service, ./store-front]
     steps:
       - name: checkout  
         uses: actions/checkout@v4
@@ -34,53 +38,11 @@ jobs:
         uses: docker/build-push-action@v5
         with:    
           tags: |
-            ${{ env.image-product }}
-          context: ./product-service
+            ${{ matrix.tag }}
+          context: ${{ matrix.context }}
           platforms: ${{ env.platforms }}
           push: true
       
-  buildorderservice:
-    runs-on: ubuntu-latest
-    steps:
-    - name: checkout  
-      uses: actions/checkout@v4  
-
-    - name: Login to docker Container Registry
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and push test
-      uses: docker/build-push-action@v5
-      with:    
-        tags: |
-          ${{ env.image-order }}
-        context: ./order-service
-        platforms: ${{ env.platforms }}
-        push: true
-
-  buildstore-front:
-    runs-on: ubuntu-latest
-    steps:
-    - name: checkout  
-      uses: actions/checkout@v4
-
-    - name: Login to docker Container Registry
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and push test
-      uses: docker/build-push-action@v5
-      with:    
-        tags: |
-          ${{ env.image-front }}
-        context: ./store-front
-        platforms: ${{ env.platforms }}
-        push: true
-  
   createcluster:
     runs-on: ubuntu-latest
     steps:
