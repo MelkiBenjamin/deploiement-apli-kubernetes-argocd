@@ -2,7 +2,9 @@ name: suprime le cluster azure
 on:
   push:
   workflow_dispatch:
-
+  schedule:
+    - cron: '0 0 * * *'
+    
 env:
   nomcluster: nomcluster
   nom-grouperessource: grouperessource
