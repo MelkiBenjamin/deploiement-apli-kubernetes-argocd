@@ -95,7 +95,7 @@ jobs:
 
       - name: creation cluster aks
         run: |
-          az aks create --resource-group ${{ env.nom-grouperessource }} --name ${{ env.nomcluster }} --enable-managed-identity --node-count 1 --generate-ssh-keys --enable-cluster-autoscaler --min-count 1 --max-count 3 --location ${{ env.location }} ${{ env.sensible-pas-afficher }} --node-vm-size B2ats_v2
+          az aks create --resource-group ${{ env.nom-grouperessource }} --name ${{ env.nomcluster }} --enable-managed-identity --node-count 1 --generate-ssh-keys --enable-cluster-autoscaler --min-count 1 --max-count 3 --location ${{ env.location }} ${{ env.sensible-pas-afficher }} --node-vm-size standard_b2ats_v2
 
 #     - name: creer le cluster aks test
 #       uses: actions/aks_create_action@v1
