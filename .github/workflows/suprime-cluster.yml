@@ -1,6 +1,6 @@
 name: suprime le cluster azure
 on:
-  push:
+#  push:
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'
@@ -19,4 +19,5 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Suppression du cluster
+        if: kubectl get clusterrolebinding | grep -q ${{ env.nomcluster }}
         run: az aks delete --resource-group ${{ env.nom-grouperessource }} --name ${{ env.nomcluster }} --yes --no-wait
