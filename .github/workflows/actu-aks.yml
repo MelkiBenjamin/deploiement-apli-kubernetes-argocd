@@ -84,9 +84,6 @@ jobs:
   createcluster:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout  
-        uses: actions/checkout@v4
-
       # Logs in with your Azure credentials
       - name: Azure login
         uses: Azure/login@v2.0.0
