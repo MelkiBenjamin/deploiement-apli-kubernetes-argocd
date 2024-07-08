@@ -38,7 +38,7 @@ jobs:
       - name: setup kubectl   
         uses: Azure/setup-kubectl@v4.0.0      
         id: install
-      
+
       - name: Setup ArgoCD CLI 
         uses: imajeetyadav/argocd-cli@v1
 
@@ -60,22 +60,9 @@ jobs:
 
       - run: ls ecommerce
 
-      - uses: ejhayes/action-argocd-deploy@releases/v1
+      - uses: clowdhaus/argo-cd-action/@v2.2.0
         with:
-            clientId: admin
-            clientSecret: ${{ secrets.ARGOCD }}
-            clusterName: 'default'
-            baseUrl: https://localhost.com
-            name: my-service
-            namespace: contoso
-            path: ecommerce
-            project: ecommerce
-            valuesFile: ecommerce/values1.yaml
-            annotations: |
-              myannotation: "true"
-            labels: |
-              group: group-a
-              env: prod
-            info: |
-              rev: ${{ github.ref }}
-              sha: ${{ github.sha }}
+          version: 2.6.7
+          command: app 
+          options: create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune --helm-set image-order=$image-order --helm-set image-product=$image-product --helm-set image-front=$image-front --helm-set key1=./ecommerce/values1.yaml --helm-set key2=./ecommerce/values2.yaml
+
