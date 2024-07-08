@@ -56,6 +56,10 @@ jobs:
 #          kubectl apply -f https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values2.yaml
 #          argocd app create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune
 
+      - run: ls
+
+      - run: ls ecommerce
+
       - uses: ejhayes/action-argocd-deploy@releases/v1
         with:
             clientId: admin
@@ -66,7 +70,7 @@ jobs:
             namespace: contoso
             path: ecommerce
             project: ecommerce
-            valuesFile: ecommerce/values1.yaml, ecommerce/values2.yaml
+            valuesFile: ./ecommerce/values1.yaml, ./ecommerce/values2.yaml
             annotations: |
               myannotation: "true"
             labels: |
