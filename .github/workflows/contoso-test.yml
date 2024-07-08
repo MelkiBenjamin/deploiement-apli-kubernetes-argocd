@@ -1,7 +1,7 @@
 name: test contoso
 
 on:
-#  push:
+  push:
   workflow_dispatch:
 
 env:
@@ -41,6 +41,17 @@ jobs:
 
       - name: Setup ArgoCD CLI 
         uses: imajeetyadav/argocd-cli@v1
+
+      - name: connexion argocd
+        env:
+          ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+        run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) --insecure ${{ env.sensible-pas-afficher }}
+
+      - name: update ArgoCD password
+        env:
+          ARGOCD: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+        run: argocd account update-password --account admin --new-password ${{ secrets.ARGOCD }} --current-password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) ${{ env.sensible-pas-afficher }}
 
       - name: connexion argocd
         env:
