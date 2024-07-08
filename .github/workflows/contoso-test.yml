@@ -68,6 +68,10 @@ jobs:
 #          argocd app create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune
 
       - uses: clowdhaus/argo-cd-action/@v2.2.0
+        env:
+        # Only required for first step in job where API is called
+        # All subsequent setps in a job will not re-download the CLI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           version: 2.6.7
           command: app 
