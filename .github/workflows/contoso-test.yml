@@ -70,7 +70,7 @@ jobs:
             namespace: contoso
             path: ecommerce
             project: ecommerce
-            valuesFile: ./ecommerce/values1.yaml, ./ecommerce/values2.yaml
+            valuesFile: ecommerce/values1.yaml
             annotations: |
               myannotation: "true"
             labels: |
