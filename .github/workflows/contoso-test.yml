@@ -48,14 +48,6 @@ jobs:
           mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
         run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password ${{ secrets.ARGOCD }} --insecure ${{ env.sensible-pas-afficher }}
 
-#      - name: Create Application Contoso with Argocd avec namespace
-#        run: |
-#          kubectl create namespace contoso
-#          kubectl config set-context --current --namespace=argocd
-#          kubectl apply -f https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values1.yaml
-#          kubectl apply -f https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values2.yaml
-#          argocd app create Contoso --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune
-
       - uses: clowdhaus/argo-cd-action/@v2.2.0
         env:
         # Only required for first step in job where API is called
