@@ -54,7 +54,7 @@ jobs:
 #          kubectl config set-context --current --namespace=argocd
 #          kubectl apply -f https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values1.yaml
 #          kubectl apply -f https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values2.yaml
-#          argocd app create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune
+#          argocd app create Contoso --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune
 
       - uses: clowdhaus/argo-cd-action/@v2.2.0
         env:
@@ -64,5 +64,5 @@ jobs:
         with:
           version: 2.11.3
           command: app
-          options: create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune  --helm-set key1=ecommerce/values1.yaml --helm-set key2=ecommerce/values2.yaml
+          options: create Contoso --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune  --helm-set key1=ecommerce/values1.yaml --helm-set key2=ecommerce/values2.yaml
 

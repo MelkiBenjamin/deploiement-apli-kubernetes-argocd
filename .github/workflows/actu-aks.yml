@@ -237,7 +237,7 @@ jobs:
           kubectl patch svc argocd-server -n argocd --type merge --patch "$(cat patch.json)"
       
       - name: argocd attendre
-        run: sleep 30
+        run: sleep 50
              
       - name: connexion argocd
         env:
@@ -290,11 +290,11 @@ jobs:
 #          kubectl config set-context --current --namespace=argocd
 #          kubectl apply -f https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values1.yaml
 #          kubectl apply -f https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values2.yaml
-#          argocd app create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune --helm
+#          argocd app create Contoso --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune --helm
 
       - uses: clowdhaus/argo-cd-action/@v2.2.0
         with:
-          version: 2.6.7
+          version: 2.11.3
           command: app 
-          options: create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune --values https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values1.yaml --values https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values2.yaml
+          options: create Contoso --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune --values https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values1.yaml --values https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values2.yaml
 
