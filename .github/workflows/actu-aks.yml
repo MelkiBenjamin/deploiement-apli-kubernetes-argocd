@@ -292,4 +292,9 @@ jobs:
 #          kubectl apply -f https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values2.yaml
 #          argocd app create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune --helm
 
-      
+      - uses: clowdhaus/argo-cd-action/@v2.2.0
+        with:
+          version: 2.6.7
+          command: app 
+          options: create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune --values https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values1.yaml --values https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values2.yaml
+
