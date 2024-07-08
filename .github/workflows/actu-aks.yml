@@ -20,6 +20,7 @@ permissions:
 jobs:
   buildproductservice:
     runs-on: ubuntu-latest
+    needs: [sonarcloud]
     steps:
       - name: checkout  
         uses: actions/checkout@v4
@@ -41,6 +42,7 @@ jobs:
       
   buildorderservice:
     runs-on: ubuntu-latest
+    needs: [sonarcloud]
     steps:
     - name: checkout  
       uses: actions/checkout@v4  
@@ -62,6 +64,7 @@ jobs:
 
   buildstore-front:
     runs-on: ubuntu-latest
+    needs: [sonarcloud]
     steps:
     - name: checkout  
       uses: actions/checkout@v4
@@ -143,7 +146,7 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    needs: [createcluster, sonarcloud]
+    needs: [createcluster]
     steps:
         # Logs in with your Azure credentials
       - name: Azure login
@@ -237,7 +240,7 @@ jobs:
           kubectl patch svc argocd-server -n argocd --type merge --patch "$(cat patch.json)"
       
       - name: argocd attendre
-        run: sleep 60
+        run: sleep 30
              
       - name: connexion argocd
         env:
@@ -282,25 +285,30 @@ jobs:
           mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
         run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password ${{ secrets.ARGOCD }} --insecure ${{ env.sensible-pas-afficher }}
 
-      - name: Create Application Contoso with Argocd
+      - name: Create Application Contoso with Argocd avec namespace
         run: |
           kubectl create namespace contoso
-          kubectl config set-context --current --namespace=argocd
-          argocd app create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune
+#          kubectl config set-context --current --namespace=argocd
+#          kubectl apply -f https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values1.yaml
+#          kubectl apply -f https://raw.githubusercontent.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd/main/ecommerce/values2.yaml
+#          argocd app create ecommerce --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune
 
-#      - name: Deploy
-#        uses: cloudposse/github-action-deploy-argocd@main
-#        id: deploy
-#        with:
-#            cluster: https://github.com/cloudposse/argocd-deploy-non-prod-test/blob/main/plat/ue2-sandbox/apps
-#            toolchain: helm
-#            namespace: argocd
-#            application: ecomerce
-#            github-pat: ${{ secrets.GITHUB_AUTH_PAT }}
-#            repository: https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd
-#            ref: ${{ github.event.pull_request.head.ref  }}
-#            image: nginx
-#            image-tag: latest
-#            operation: deploy
-#            debug: false
-#            synchronously: true
+      - uses: ejhayes/action-argocd-deploy@releases/v1
+        with:
+            clientId: admin
+            clientSecret: ${{ secrets.ARGOCD }}
+            clusterName: 'default'
+            baseUrl: https://localhost.com
+            name: my-service
+            namespace: contoso
+            path: ecommerce
+            project: ecommerce
+            valuesFile: ecommerce/values1.yml, ecommerce/values2.yml
+            annotations: |
+              myannotation: "true"
+            labels: |
+              group: group-a
+              env: prod
+            info: |
+              rev: ${{ github.ref }}
+              sha: ${{ github.sha }}

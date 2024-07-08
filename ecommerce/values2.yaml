@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: secrets-orderqueue
+  namespace: contoso
 type: Opaque
 stringData:
   ORDER_QUEUE_USERNAME: username

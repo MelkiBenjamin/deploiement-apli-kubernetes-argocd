@@ -19,5 +19,5 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Suppression du cluster
-        if: kubectl get clusterrolebinding | grep -q ${{ env.nomcluster }}
+        if: kubectl get clusterrolebinding | grep -q ${{ env.nomcluster }} && kubectl get group
         run: az aks delete --resource-group ${{ env.nom-grouperessource }} --name ${{ env.nomcluster }} --yes --no-wait
