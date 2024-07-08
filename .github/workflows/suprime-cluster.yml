@@ -1,6 +1,6 @@
 name: suprime le cluster azure
 on:
-#  push:
+  push:
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'
