@@ -21,14 +21,10 @@ jobs:
   contoso:
     runs-on: ubuntu-latest
     steps:
-        # Logs in with your Azure credentials
       - name: Azure login
         uses: Azure/login@v2.0.0
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-#      - name: conexion au cluster
-#        run: az aks get-credentials --resource-group ${{ env.nom-grouperessource }} --name ${{ env.nomcluster }}
 
       - name: Get K8s context
         uses: Azure/aks-set-context@v4.0.0
