@@ -31,6 +31,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push test
+        if: docker
         uses: docker/build-push-action@v5
         with:    
           tags: |
@@ -159,7 +160,7 @@ jobs:
         run: |
           kubectl get namespace argocd || kubectl create namespace argocd
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-          helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3 -n monitoring
+          helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3 -n monitoring --atomic --wait
 
 #      - name: redirection de port
 #        run: |
@@ -200,7 +201,7 @@ jobs:
 #        run: argocd install --insecure --grpc-web --create-kustomize-namespace
 
       - name: create namespace argocd
-        run: kubectl create namespace argocd
+        run: kubectl get namespace argocd || kubectl create namespace argocd
 
       - name: Deploys application argocd
         uses: Azure/k8s-deploy@v5.0.0
