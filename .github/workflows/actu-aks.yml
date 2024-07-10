@@ -213,7 +213,7 @@ jobs:
 
       - name: atendre argocd
         run: |
-          kubectl wait --for=condition=Ready pods --all -n monitoring
+          kubectl wait --for=condition=available deployement --all -n monitoring
 
       - name: load balancing
         run: |
