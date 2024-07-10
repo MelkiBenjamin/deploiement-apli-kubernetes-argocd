@@ -1,7 +1,7 @@
 name: Build and deploy an app to AKS
 
 on:
-  push:
+#  push:
   workflow_dispatch:
 
 env:
@@ -159,7 +159,7 @@ jobs:
         run: |
           kubectl get namespace argocd || kubectl create namespace argocd
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-          helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3 -n monitoring --atomic --wait
+          helm upgrade --install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3 -n monitoring --atomic --wait
 
 #      - name: redirection de port
 #        run: |
