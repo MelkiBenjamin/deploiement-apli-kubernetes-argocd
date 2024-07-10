@@ -157,7 +157,7 @@ jobs:
 
       - name: install helm apli monitoring
         run: |
-          kubectl create namespace monitoring
+          kubectl get namespace argocd || kubectl create namespace argocd
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3 -n monitoring
 
