@@ -162,7 +162,7 @@ jobs:
 #          helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3 -n monitoring
 
       - name: Deploy kube-prometheus-stack
-        uses: deliverybot/helm@v1.5
+        uses: deliverybot/helm@v1.5.0
         with:
           release: 'kube-prometheus-stack'
           namespace: 'monitoring'
@@ -278,7 +278,7 @@ jobs:
         run: |
           kubectl create namespace contoso
 
-      - uses: ejhayes/action-argocd-deploy@releases/v1
+      - uses: ejhayes/action-argocd-deploy@releases/v2.0.0
         with:
             clientId: admin
             clientSecret: ${{ secrets.ARGOCD }}
