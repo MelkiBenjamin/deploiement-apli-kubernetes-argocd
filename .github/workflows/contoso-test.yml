@@ -52,7 +52,7 @@ jobs:
         run: |
           kubectl get namespace contoso || kubectl create namespace contoso
           
-      - uses: ejhayes/action-argocd-deploy@v2.0.0
+      - uses: ejhayes/action-argocd-deploy@v1.0.0
         with:
             clientId: admin
             clientSecret: ${{ secrets.ARGOCD }}
