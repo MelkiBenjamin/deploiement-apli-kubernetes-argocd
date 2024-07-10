@@ -158,16 +158,8 @@ jobs:
       - name: install helm apli monitoring
         run: |
           kubectl create namespace monitoring
-#          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-#          helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3 -n monitoring
-
-      - name: Deploy kube-prometheus-stack
-        uses: deliverybot/helm@v1.5.0
-        with:
-          release: 'kube-prometheus-stack'
-          namespace: 'monitoring'
-          chart: 'prometheus-community/kube-prometheus-stack'
-          token: '${{ github.token }}'
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3 -n monitoring
 
 #      - name: redirection de port
 #        run: |
