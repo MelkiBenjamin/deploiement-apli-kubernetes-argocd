@@ -157,7 +157,7 @@ jobs:
 
       - name: install helm apli monitoring
         run: |
-          kubectl get namespace argocd || kubectl create namespace argocd
+          kubectl get namespace monitoring || kubectl create namespace monitoring
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm upgrade --install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3 -n monitoring --atomic --wait
 
@@ -268,9 +268,9 @@ jobs:
 
       - name: Create Application Contoso with Argocd avec namespace
         run: |
-          kubectl create namespace contoso
-
-      - uses: ejhayes/action-argocd-deploy@releases/v2.0.0
+          kubectl get namespace contoso || kubectl create namespace contoso
+          
+      - uses: ejhayes/action-argocd-deploy@v2.0.0
         with:
             clientId: admin
             clientSecret: ${{ secrets.ARGOCD }}
