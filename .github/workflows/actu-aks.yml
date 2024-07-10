@@ -31,7 +31,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push test
-        if: docker
         uses: docker/build-push-action@v5
         with:    
           tags: |
