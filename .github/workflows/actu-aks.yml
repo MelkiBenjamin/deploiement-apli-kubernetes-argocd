@@ -78,10 +78,13 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: git diff --name-only ${{ github.sha }} | grep store-front
+      run: git diff --name-only ${{ github.sha }} | grep store-front
+
     - name: Build and push test
       env:
         verif: git diff --name-only ${{ github.sha }} | grep store-front
-      if: ${{ env.verif }} == store-front
+      if: ${{ env.verif }} == startsWith('env.verif', store-front')
       uses: docker/build-push-action@v5
       with:    
         tags: |
@@ -141,7 +144,7 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    needs: [createcluster]
+    needs: [createcluster, sonarcloud]
     steps:
         # Logs in with your Azure credentials
       - name: Azure login
@@ -183,7 +186,7 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    needs: [createcluster]
+    needs: [createcluster, sonarcloud]
     steps:
         # Logs in with your Azure credentials
       - name: Azure login
