@@ -239,7 +239,7 @@ jobs:
           ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
           mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
           newmdp: ${{ secrets.ARGOCD }} 
-        if: ${{ env.mdp != env.newmdp  }} ${{ env.sensible-pas-afficher }}
+        if: ${{ env.mdp }} != ${{ env.newmdp }} ${{ env.sensible-pas-afficher }}
         run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) --insecure ${{ env.sensible-pas-afficher }}
 
       - name: update ArgoCD password
