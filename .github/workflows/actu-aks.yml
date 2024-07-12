@@ -31,6 +31,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push test
+        env:
+          verif: git diff --name-only ${{ github.sha }} | grep product-service
+        if: ${{ env.verif }} == product-service
         uses: docker/build-push-action@v5
         with:    
           tags: |
@@ -52,6 +55,9 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and push test
+      env:
+        verif: git diff --name-only ${{ github.sha }} | grep order-service
+      if: ${{ env.verif }} == order-service
       uses: docker/build-push-action@v5
       with:    
         tags: |
@@ -73,6 +79,9 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and push test
+      env:
+        verif: git diff --name-only ${{ github.sha }} | grep store-front
+      if: ${{ env.verif }} == store-front
       uses: docker/build-push-action@v5
       with:    
         tags: |
@@ -104,8 +113,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Analyze with SonarCloud
+        if: ${{ env.verif }} == store-front
         uses: SonarSource/sonarcloud-github-action@v2.3.0
         env:
+          verif: git diff --name-only ${{ github.sha }} | grep prduct-service | grep store-front| grep order-service
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
         with:
           # Additional arguments for the SonarScanner CLI
@@ -130,7 +141,7 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    needs: [createcluster, sonarcloud]
+    needs: [createcluster]
     steps:
         # Logs in with your Azure credentials
       - name: Azure login
@@ -172,7 +183,7 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    needs: [createcluster, sonarcloud]
+    needs: [createcluster]
     steps:
         # Logs in with your Azure credentials
       - name: Azure login
@@ -213,33 +224,39 @@ jobs:
 
       - name: atendre argocd
         run: |
-          kubectl wait --for=condition=available deployement --all -n monitoring
+          kubectl wait --for=condition=available deployement --all -n argocd
 
       - name: load balancing
         run: |
           echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
           kubectl patch svc argocd-server -n argocd --type merge --patch "$(cat patch.json)"
       
-      - name: argocd attendre
-        run: sleep 60
-
+#      - name: argocd attendre
+#        run: sleep 60
         
-#      - name: connexion argocd
-#        env:
-#          ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
-#          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-#        run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password ${{ secrets.ARGOCD }} --insecure ${{ env.sensible-pas-afficher }}
-
-      - name: connexion argocd
+      - name: connexion argocd 1er connexion
         env:
           ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
           mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+          newmdp: ${{ secrets.ARGOCD }} 
+        if: ${{ env.mdp != env.newmdp  }} ${{ env.sensible-pas-afficher }}
         run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) --insecure ${{ env.sensible-pas-afficher }}
 
       - name: update ArgoCD password
         env:
           ARGOCD: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+          newmdp: ${{ secrets.ARGOCD }} 
+        if: ${{ env.mdp != env.newmdp  }} ${{ env.sensible-pas-afficher }}
         run: argocd account update-password --account admin --new-password ${{ secrets.ARGOCD }} --current-password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) ${{ env.sensible-pas-afficher }}
+
+      - name: connexion argocd a partir 2eme connexion
+        env:
+          ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+          newmdp: ${{ secrets.ARGOCD }} 
+        if: ${{ env.mdp == env.newmdp  }} ${{ env.sensible-pas-afficher }}
+        run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password ${{ secrets.ARGOCD }} --insecure ${{ env.sensible-pas-afficher }}
 
   contoso:
     runs-on: ubuntu-latest
@@ -281,7 +298,8 @@ jobs:
         run: |
           kubectl get namespace contoso || kubectl create namespace contoso
           
-      - uses: clowdhaus/argo-cd-action/@v2.2.0
+      - name: Create Application Contoso with Argocd avec namespace
+        uses: clowdhaus/argo-cd-action/@v2.2.0
         env:
           # Only required for first step in job where API is called
           # All subsequent setps in a job will not re-download the CLI
@@ -290,5 +308,4 @@ jobs:
           version: 2.11.3
           command: app
           options: create contoso --repo https://github.com/MelkiBenjamin/deploiement-apli-kubernetes-argocd --path ecommerce --dest-server https://kubernetes.default.svc --dest-namespace contoso --sync-policy automated --auto-prune
-  
   

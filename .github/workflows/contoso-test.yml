@@ -46,7 +46,8 @@ jobs:
         env:
           ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
           mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-        run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password ${{ secrets.ARGOCD }} --insecure ${{ env.sensible-pas-afficher }}
+        run: |
+          argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password ${{ secrets.ARGOCD }} --insecure ${{ env.sensible-pas-afficher }}
 
       - uses: clowdhaus/argo-cd-action/@v2.2.0
         env:
