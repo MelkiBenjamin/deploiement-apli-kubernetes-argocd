@@ -32,7 +32,7 @@ jobs:
 
       - name: Build and push test
         env:
-          verif: git diff --name-only ${{ github.sha }} | grep product-service
+          verif: git diff --name-only | grep product-service
         if: ${{ env.verif }} == product-service
         uses: docker/build-push-action@v5
         with:    
@@ -224,7 +224,7 @@ jobs:
 
       - name: atendre argocd
         run: |
-          kubectl wait --for=condition=available deployement --all -n argocd
+          kubectl wait --for=condition=ready pod --all -n argocd
 
       - name: load balancing
         run: |
