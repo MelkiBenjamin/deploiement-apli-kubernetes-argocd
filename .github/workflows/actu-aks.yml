@@ -33,7 +33,7 @@ jobs:
       - name: Build and push test
         env:
           verif: git diff --name-only | grep product-service
-        if: ${{ env.verif == product-service }} 
+        if: ${{ env.verif == 'product-service' }} 
         uses: docker/build-push-action@v5
         with:    
           tags: |
