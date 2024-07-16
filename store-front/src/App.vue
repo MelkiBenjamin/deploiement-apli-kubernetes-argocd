@@ -114,7 +114,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 120px;
+  margin-top: 60px;
 }
 
 footer {
@@ -150,19 +150,10 @@ a {
   text-decoration: none;
 }
 
-button {
-  padding: 10px;
-  background-color: #005f8b;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  height: 42px;
-}
-
 .product-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  
 }
 
 .product-card {
@@ -195,20 +186,6 @@ button {
   margin-bottom: 1rem;
 }
 
-.product-controls {
-  display: flex;
-  align-items: center;
-  margin-top: 0.5rem;
-}
-
-.product-controls p {
-  margin-right: 20px;
-}
-
-.product-controls button:hover {
-  background-color: #005f8b;
-}
-
 .product-price {
   font-weight: bold;
   font-size: 1.2rem;
@@ -223,10 +200,72 @@ button {
   margin-right: 10px;
 }
 
+.product-detail {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1rem;
+}
+
+.product-image {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.product-image img {
+  width: 100%;
+  height: auto;
+}
+
+.product-info {
+  flex: 1;
+  text-align: left;
+}
+
+.product-info h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.product-info p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.product-controls {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.product-controls p {
+  margin-right: 20px;
+}
+
+.product-controls button {
+  padding: 10px;
+  background-color: #005f8b;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.product-controls button:hover {
+  background-color: #005f8b;
+}
+
+/* make image the width of the container */
+.product-detail img {
+  width: 100%;
+}
+
 .shopping-cart {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 50px;
 }
 
 .shopping-cart h2 {
@@ -237,6 +276,7 @@ button {
 .shopping-cart-table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 20px;
 }
 
 .shopping-cart-table th,
