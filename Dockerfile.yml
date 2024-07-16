@@ -1,3 +1,0 @@
-FROM mcr.microsoft.com/azure-cli:latest
-RUN apk add install -y kubectl
-RUN az login

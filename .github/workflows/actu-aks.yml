@@ -31,9 +31,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push test
-        env:
-          verif: git diff --name-only ${{ github.sha }} | grep product-service
-        if: ${{ env.verif == 'product-service' }} 
+#        env:
+#          verif: git diff --name-only ${{ github.sha }} | grep product-service
+#        if: ${{ env.verif == 'product-service' }} 
         uses: docker/build-push-action@v5
         with:    
           tags: |
@@ -55,9 +55,9 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and push test
-      env:
-        verif: git diff --name-only ${{ github.sha }} | grep order-service
-      if: ${{ env.verif }} == order-service
+#      env:
+#        verif: git diff --name-only ${{ github.sha }} | grep order-service
+#      if: ${{ env.verif }} == order-service
       uses: docker/build-push-action@v5
       with:    
         tags: |
@@ -78,13 +78,13 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: git diff --name-only ${{ github.sha }} | grep store-front
-      run: git diff --name-only ${{ github.sha }} | grep store-front
+#    - name: git diff --name-only ${{ github.sha }} | grep store-front
+#      run: git diff --name-only ${{ github.sha }} | grep store-front
 
     - name: Build and push test
-      env:
-        verif: git diff --name-only ${{ github.sha }} | grep store-front
-      if: ${{ env.verif }} == startsWith('env.verif', store-front')
+#      env:
+#        verif: git diff --name-only ${{ github.sha }} | grep store-front
+#      if: ${{ env.verif }} == startsWith('env.verif', store-front')
       uses: docker/build-push-action@v5
       with:    
         tags: |
@@ -116,7 +116,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Analyze with SonarCloud
-        if: ${{ env.verif }} == store-front
+#       if: ${{ env.verif }} == store-front
         uses: SonarSource/sonarcloud-github-action@v2.3.0
         env:
           verif: git diff --name-only ${{ github.sha }} | grep prduct-service | grep store-front| grep order-service
@@ -241,25 +241,24 @@ jobs:
         env:
           ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
           mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-          newmdp: ${{ secrets.ARGOCD }} 
-        if: ${{ env.mdp != env.newmdp }} ${{ env.sensible-pas-afficher }}
+#          newmdp: ${{ secrets.ARGOCD }} 
+#        if: ${{ env.mdp != env.newmdp }} ${{ env.sensible-pas-afficher }}
         run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) --insecure ${{ env.sensible-pas-afficher }}
 
       - name: update ArgoCD password
         env:
           ARGOCD: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
           mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-          newmdp: ${{ secrets.ARGOCD }} 
-        if: ${{ env.mdp != env.newmdp  }} ${{ env.sensible-pas-afficher }}
+#          newmdp: ${{ secrets.ARGOCD }} 
+#        if: ${{ env.mdp != env.newmdp  }} ${{ env.sensible-pas-afficher }}
         run: argocd account update-password --account admin --new-password ${{ secrets.ARGOCD }} --current-password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) ${{ env.sensible-pas-afficher }}
 
-      - name: connexion argocd a partir 2eme connexion
-        env:
-          ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
-          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-          newmdp: ${{ secrets.ARGOCD }} 
-        if: ${{ env.mdp == env.newmdp  }} ${{ env.sensible-pas-afficher }}
-        run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password ${{ secrets.ARGOCD }} --insecure ${{ env.sensible-pas-afficher }}
+#      - name: connexion argocd a partir 2eme connexion
+#        env:
+#          ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+#          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+#          newmdp: ${{ secrets.ARGOCD }} 
+#        run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password ${{ secrets.ARGOCD }} --insecure ${{ env.sensible-pas-afficher }}
 
   contoso:
     runs-on: ubuntu-latest
