@@ -107,7 +107,7 @@ jobs:
 
       - name: creation cluster aks
         run: |
-          az resource wait --exists --name "${{ env.nomcluster }}" --resource-group "${{ env.nom-grouperessource }}" --resource-type "Microsoft.ContainerService/managedClusters" || az aks create --resource-group ${{ env.nom-grouperessource }} --name ${{ env.nomcluster }} --enable-managed-identity --node-count 1 --generate-ssh-keys --enable-cluster-autoscaler --min-count 1 --max-count 2 --location ${{ env.location }} ${{ env.sensible-pas-afficher }} --node-vm-size Standard_B2s
+          az resource --exists --name "${{ env.nomcluster }}" --resource-group "${{ env.nom-grouperessource }}" --resource-type "Microsoft.ContainerService/managedClusters" || az aks create --resource-group ${{ env.nom-grouperessource }} --name ${{ env.nomcluster }} --enable-managed-identity --node-count 1 --generate-ssh-keys --enable-cluster-autoscaler --min-count 1 --max-count 2 --location ${{ env.location }} ${{ env.sensible-pas-afficher }} --node-vm-size Standard_B2s
 
   sonarcloud:
     runs-on: ubuntu-latest
