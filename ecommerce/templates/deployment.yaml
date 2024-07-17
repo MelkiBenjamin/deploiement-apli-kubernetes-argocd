@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: rabbitmq
 spec:
+  automountServiceAccountToken: false
   replicas: 2
   selector:
     matchLabels:
@@ -81,6 +82,7 @@ kind: Deployment
 metadata:
   name: order-service
 spec:
+  automountServiceAccountToken: false
   replicas: 2
   selector:
     matchLabels:
@@ -174,6 +176,7 @@ kind: Deployment
 metadata:
   name: product-service
 spec:
+  automountServiceAccountToken: false
   replicas: 2
   selector:
     matchLabels:
@@ -230,6 +233,7 @@ kind: Deployment
 metadata:
   name: store-front
 spec:
+  automountServiceAccountToken: false
   replicas: 2
   selector:
     matchLabels:
