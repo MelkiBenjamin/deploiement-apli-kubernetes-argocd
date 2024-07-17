@@ -1,7 +1,7 @@
 name: Build and deploy an app to AKS
 
 on:
-#  push:
+  push:
   workflow_dispatch:
 
 env:
@@ -98,7 +98,7 @@ jobs:
 
       - name: creation cluster aks
         run: |
-          az resource wait --exists --name "${{ env.nomcluster }}" --resource-group "${{ env.nom-grouperessource }}" --resource-type "Microsoft.ContainerService/managedClusters" || az aks create --resource-group ${{ env.nom-grouperessource }} --name ${{ env.nomcluster }} --enable-managed-identity --node-count 1 --generate-ssh-keys --enable-cluster-autoscaler --min-count 1 --max-count 2 --location ${{ env.location }} ${{ env.sensible-pas-afficher }} --node-vm-size Standard_B2s
+          az resource --exists --name "${{ env.nomcluster }}" --resource-group "${{ env.nom-grouperessource }}" --resource-type "Microsoft.ContainerService/managedClusters" || az aks create --resource-group ${{ env.nom-grouperessource }} --name ${{ env.nomcluster }} --enable-managed-identity --node-count 1 --generate-ssh-keys --enable-cluster-autoscaler --min-count 1 --max-count 2 --location ${{ env.location }} ${{ env.sensible-pas-afficher }} --node-vm-size Standard_B2s
 
   sonarcloud:
     runs-on: ubuntu-latest
@@ -208,21 +208,21 @@ jobs:
 #      - name: argocd attendre
 #        run: sleep 60
         
-#      - name: connexion argocd 1er connexion
+      - name: connexion argocd 1er connexion
 #        env:
 #          ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
 #          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
 #          newmdp: ${{ secrets.ARGOCD }} 
 #        if: ${{ env.mdp != env.newmdp }} ${{ env.sensible-pas-afficher }}
-#        run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) --insecure ${{ env.sensible-pas-afficher }}
+        run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) --insecure ${{ env.sensible-pas-afficher }}
 
- #     - name: update ArgoCD password
- #       env:
- #         ARGOCD: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
- #         mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+      - name: update ArgoCD password
+        env:
+          ARGOCD: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
 #          newmdp: ${{ secrets.ARGOCD }} 
 #        if: ${{ env.mdp != env.newmdp  }} ${{ env.sensible-pas-afficher }}
-  #      run: argocd account update-password --account admin --new-password ${{ secrets.ARGOCD }} --current-password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) ${{ env.sensible-pas-afficher }}
+        run: argocd account update-password --account admin --new-password ${{ secrets.ARGOCD }} --current-password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) ${{ env.sensible-pas-afficher }}
 
   contoso:
     runs-on: ubuntu-latest
