@@ -31,6 +31,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push test
+        # faire cette action que si modification dans le dossier product-service dans des vm diferente
+        env:
+          verif: git diff --name-only ${{ github.sha }} | grep prduct-service
+        if: ${{ env.verif }} != ''
         uses: docker/build-push-action@v5
         with:    
           tags: |
