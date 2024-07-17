@@ -12,6 +12,7 @@ spec:
       labels:
         app: rabbitmq
     spec:
+      automountServiceAccountToken: false
       nodeSelector:
         "kubernetes.io/os": linux
       containers:
