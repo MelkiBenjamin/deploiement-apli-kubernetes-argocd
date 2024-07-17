@@ -1,7 +1,7 @@
 name: Build and deploy an app to AKS
 
 on:
-  push:
+#  push:
   workflow_dispatch:
 
 env:
@@ -31,10 +31,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push test
-        # faire cette action que si modification dans le dossier product-service dans des vm diferente
-        env:
-          verif: git diff --name-only ${{ github.sha }} | grep prduct-service
-        if: ${{ env.verif }} != 'product-service'
         uses: docker/build-push-action@v5
         with:    
           tags: |
@@ -110,7 +106,7 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v2.3.0
         env:
           verif: git diff --name-only ${{ github.sha }} | grep prduct-service | grep store-front| grep order-service
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
         with:
           args:
             -Dsonar.projectKey=MelkiBenjamin_test-sonarqube
@@ -152,7 +148,6 @@ jobs:
           kubectl get namespace monitoring || kubectl create namespace monitoring
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm upgrade --install my-kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 57.0.3 -n monitoring --atomic --wait
-#          kubectl exec --namespace monitoring -it $(kubectl get pods --namespace monitoring -l "app.kubernetes.io/name=grafana" -o jsonpath="{.items[0].metadata.name}") -- grafana cli admin reset-admin-password {{ secrets.GRAFANA_PASSWORD }}
 
 #      - name: redirection de port
 #        run: |
@@ -204,24 +199,17 @@ jobs:
         run: |
           echo '{"spec": {"type": "LoadBalancer"}}' > patch.json
           kubectl patch svc argocd-server -n argocd --type merge --patch "$(cat patch.json)"
-      
-#      - name: argocd attendre
-#        run: sleep 60
-        
+              
       - name: connexion argocd 1er connexion
 #        env:
 #          ip: kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
 #          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-#          newmdp: ${{ secrets.ARGOCD }} 
-#        if: ${{ env.mdp != env.newmdp }} ${{ env.sensible-pas-afficher }}
         run: argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].ip}') --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) --insecure ${{ env.sensible-pas-afficher }}
 
       - name: update ArgoCD password
-        env:
-          ARGOCD: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-#          newmdp: ${{ secrets.ARGOCD }} 
-#        if: ${{ env.mdp != env.newmdp  }} ${{ env.sensible-pas-afficher }}
+#        env:
+#          ARGOCD: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+#          mdp: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
         run: argocd account update-password --account admin --new-password ${{ secrets.ARGOCD }} --current-password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) ${{ env.sensible-pas-afficher }}
 
   contoso:
