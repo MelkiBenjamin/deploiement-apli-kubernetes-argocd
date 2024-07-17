@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: rabbitmq
 spec:
-  automountServiceAccountToken: false
   replicas: 2
   selector:
     matchLabels:
