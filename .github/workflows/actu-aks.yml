@@ -1,7 +1,7 @@
 name: Build and deploy an app to AKS
 
 on:
-#  push:
+  push:
   workflow_dispatch:
 
 env:
@@ -194,6 +194,7 @@ jobs:
       - name: attendre argocd
         run: |
           kubectl wait --for=condition=available deployment --all -n argocd
+          sleep 60
 
       - name: load balancing
         run: |
