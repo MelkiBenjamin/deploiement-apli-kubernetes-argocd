@@ -1,4 +1,4 @@
-# Déploiement-Apli-Kubenetes-ArgoCD
+# Déploiement Apli Kubenetes ArgoCD
 
 # Projet de fin d'études de la formation Administrateur Système DevOps
 
