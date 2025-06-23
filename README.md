@@ -1,6 +1,6 @@
-# deploiement-apli-kubenete-argocd
+# Déploiement-Apli-Kubenetes-ArgoCD
 
-# Projet de fin d'études de formation Administrateur Système DevOps
+# Projet de fin d'études de la formation Administrateur Système DevOps
 
 Ce projet est constitué de :
 
@@ -10,6 +10,6 @@ Ce projet est constitué de :
 - Argo CD pour le GitOps
 - SonarCloud pour la sécurité
 - Prometheus et Grafana pour le monitoring
-- Application de 3 microservices déployés Contoso
+- Application de 3 microservices déployés pour Contoso
 
-Tout cela automatisé dans Github Actions.
+Tout cela automatisé dans GitHub Actions.
